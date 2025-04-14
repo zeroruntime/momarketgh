@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+
+{% block title %}Register - MoMarket GH{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto bg-white rounded-lg shadow-md overflow-hidden">
+    <div class="bg-green-700 text-white py-4 px-6">
+        <h2 class="text-2xl font-bold">Join MoMarket GH</h2>
+        <p class="text-green-100">Create your account to get started</p>
+    </div>
+    <div class="p-6">
+        <form method="post" action="{% url 'register' %}">
+            {% csrf_token %}
+            
+            <div class="mb-6">
+                <label class="block text-gray-700 text-sm font-bold mb-2">Choose Your Role</label>
+                <div class="grid grid-cols-3 gap-4">
+                    <div>
+                        <input type="radio" name="role" id="farmer" value="Farmer" class="hidden peer" {% if role == 'Farmer' %}checked{% endif %} required>
+                        <label for="farmer" class="block cursor-pointer p-4 text-center border rounded-lg peer-checked:border-green-500 peer-checked:bg-green-50 hover:bg-gray-50">
+                            <div class="text-3xl mb-2">👨‍🌾</div>
+                            <div class="font-medium">Farmer</div>
+                        </label>
+                    </div>
+                    <div>
+                        <input type="radio" name="role" id="trader" value="Trader" class="hidden peer" {% if role == 'Trader' %}checked{% endif %} required>
+                        <label for="trader" class="block cursor-pointer p-4 text-center border rounded-lg peer-checked:border-blue-500 peer-checked:bg-blue-50 hover:bg-gray-50">
+                            <div class="text-3xl mb-2">🧑‍💼</div>
+                            <div class="font-medium">Trader</div>
+                        </label>
+                    </div>
+                    <div>
+                        <input type="radio" name="role" id="transporter" value="Transporter" class="hidden peer" {% if role == 'Transporter' %}checked{% endif %} required>
+                        <label for="transporter" class="block cursor-pointer p-4 text-center border rounded-lg peer-checked:border-orange-500 peer-checked:bg-orange-50 hover:bg-gray-50">
+                            <div class="text-3xl mb-2">🚚</div>
+                            <div class="font-medium">Transporter</div>
+                        </label>
+                    </div>
+                </div>
+                {% if form.role.errors %}
+                <p class="text-red-500 text-xs mt-1">{{ form.role.errors }}</p>
+                {% endif %}
+            </div>
+
+            <div class="mb-4">
+                <label for="id_full_name" class="block text-gray-700 text-sm font-bold mb-2">Full Name:</label>
+                <input type="text" name="full_name" id="id_full_name" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                {% if form.full_name.errors %}
+                <p class="text-red-500 text-xs mt-1">{{ form.full_name.errors }}</p>
+                {% endif %}
+            </div>
+
+            <div class="mb-4">
+                <label for="id_username" class="block text-gray-700 text-sm font-bold mb-2">Username:</label>
+                <input type="text" name="username" id="id_username" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                {% if form.username.errors %}
+                <p class="text-red-500 text-xs mt-1">{{ form.username.errors }}</p>
+                {% endif %}
+            </div>
+
+            <div class="mb-4">
+                <label for="id_phone_number" class="block text-gray-700 text-sm font-bold mb-2">Phone Number:</label>
+                <input type="tel" name="phone_number" id="id_phone_number" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                {% if form.phone_number.errors %}
+                <p class="text-red-500 text-xs mt-1">{{ form.phone_number.errors }}</p>
+                {% endif %}
+            </div>
+
+            <div class="mb-4">
+                <label for="id_region" class="block text-gray-700 text-sm font-bold mb-2">Region:</label>
+                <select name="region" id="id_region" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                    <option value="">Select Region</option>
+                    <option value="Greater Accra">Greater Accra</option>
+                    <option value="Ashanti">Ashanti</option>
+                    <option value="Eastern">Eastern</option>
+                    <option value="Western">Western</option>
+                    <option value="Central">Central</option>
+                    <option value="Northern">Northern</option>
+                    <option value="Upper East">Upper East</option>
+                    <option value="Upper West">Upper West</option>
+                    <option value="Volta">Volta</option>
+                    <option value="Bono">Bono</option>
+                    <option value="Bono East">Bono East</option>
+                    <option value="Ahafo">Ahafo</option>
+                    <option value="Western North">Western North</option>
+                    <option value="Oti">Oti</option>
+                    <option value="Savannah">Savannah</option>
+                    <option value="North East">North East</option>
+                </select>
+                {% if form.region.errors %}
+                <p class="text-red-500 text-xs mt-1">{{ form.region.errors }}</p>
+                {% endif %}
+            </div>
+
+            <div class="mb-4">
+                <label for="id_location" class="block text-gray-700 text-sm font-bold mb-2">Town/City:</label>
+                <input type="text" name="location" id="id_location" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                {% if form.location.errors %}
+                <p class="text-red-500 text-xs mt-1">{{ form.location.errors }}</p>
+                {% endif %}
+            </div>
+
+            <div class="mb-4">
+                <label for="id_password1" class="block text-gray-700 text-sm font-bold mb-2">Password:</label>
+                <input type="password" name="password1" id="id_password1" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                {% if form.password1.errors %}
+                <p class="text-red-500 text-xs mt-1">{{ form.password1.errors }}</p>
+                {% endif %}
+            </div>
+
+            <div class="mb-6">
+                <label for="id_password2" class="block text-gray-700 text-sm font-bold mb-2">Confirm Password:</label>
+                <input type="password" name="password2" id="id_password2" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                {% if form.password2.errors %}
+                <p class="text-red-500 text-xs mt-1">{{ form.password2.errors }}</p>
+                {% endif %}
+            </div>
+
+            <div class="flex items-center justify-between">
+                <button type="submit" class="bg-green-700 hover:bg-green-800 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                    Register
+                </button>
+                <a href="{% url 'login' %}" class="inline-block align-baseline font-bold text-sm text-green-700 hover:text-green-800">
+                    Already have an account?
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ product.crop_name }} - MoMarket GH{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+        <div class="md:flex">
+            <div class="md:w-1/2">
+                {% if product.photo %}
+                    <img src="{{ product.photo.url }}" alt="{{ product.crop_name }}" class="w-full h-full object-cover object-center" />
+                {% else %}
+                <div class="w-full h-full bg-gray-200 flex items-center justify-center" style="min-height: 300px;">
+                    <span class="text-gray-500 text-6xl">🌾</span>
+                </div>
+                {% endif %}
+            </div>
+            <div class="md:w-1/2 p-6">
+                <div class="flex justify-between items-start">
+                    <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ product.crop_name }}</h1>
+                    <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">{{ product.created_at|date:"F d, Y" }}</span>
+                </div>
+
+                <div class="flex items-center mb-4">
+                    <div class="flex items-center">
+                        <svg class="w-4 h-4 text-gray-500 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+                        </svg>
+                        <span class="text-gray-500">{{ product.region }}, {{ product.location }}</span>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <span class="text-2xl font-bold text-green-700">₵{{ product.price_per_unit }}</span>
+                        <span class="text-gray-500">per {{ product.unit }}</span>
+                    </div>
+                    <div>
+                        <span class="text-lg font-semibold">{{ product.quantity }} {{ product.unit }}</span>
+                        <span class="text-gray-500">available</span>
+                    </div>
+                </div>
+
+                <div class="border-t border-b border-gray-200 py-4 mb-4">
+                    <h3 class="text-lg font-semibold mb-2">Description</h3>
+                    <p class="text-gray-700">{{ product.description }}</p>
+                </div>
+
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-2">Seller Information</h3>
+                    <div class="flex items-center">
+                        <div class="h-12 w-12 rounded-full bg-green-100 flex items-center justify-center text-xl mr-3">
+                            {% if product.user.role == 'Farmer' %}👨‍🌾{% else %}🧑‍💼{% endif %}
+                        </div>
+                        <div>
+                            <p class="font-semibold">{{ product.user.full_name }}</p>
+                            <p class="text-gray-500 text-sm">{{ product.user.role }} from {{ product.user.region }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="border-t border-gray-200 pt-4">
+                    {% if user.is_authenticated %}
+                    <a href="https://wa.me/{{ product.user.phone_number|slugify }}" target="_blank" class="track-click block w-full bg-green-600 hover:bg-green-700 text-white text-center py-3 px-4 rounded-lg font-semibold mb-3" data-listing-id="{{ product.id }}">
+                        <div class="flex items-center justify-center">
+                            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"></path>
+                                <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 22c-5.523 0-10-4.477-10-10S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"></path>
+                            </svg>
+                            Contact via WhatsApp
+                        </div>
+                    </a>
+                    <p class="text-xs text-gray-500 text-center">Contacting the seller directly via WhatsApp</p>
+                    {% else %}
+                    <div class="bg-gray-100 rounded-lg p-4 text-center">
+                        <p class="text-gray-700 mb-2">You need to login to contact this seller</p>
+                        <a href="{% url 'login' %}" class="text-green-700 font-semibold hover:underline">Login now</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-8">
+        <h2 class="text-2xl font-bold mb-4">Similar Products</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {% for similar in similar_products %}
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="h-40 bg-gray-200">
+                    {% if similar.photo %}
+                    <img src="{{ similar.photo.url }}" alt="{{ similar.crop_name }}" class="w-full h-full object-cover">
+                    {% else %}
+                    <div class="w-full h-full flex items-center justify-center">
+                        <span class="text-gray-500 text-4xl">🌾</span>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="p-4">
+                    <h3 class="text-lg font-semibold mb-2">{{ similar.crop_name }}</h3>
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-gray-600">{{ similar.quantity }} {{ similar.unit }}</span>
+                        <span class="font-bold text-green-700">₵{{ similar.price_per_unit }}</span>
+                    </div>
+                    <div class="flex items-center text-gray-500 mb-3">
+                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+                        </svg>
+                        <span class="text-sm">{{ similar.region }}</span>
+                    </div>
+                    <a href="{% url 'product_detail' similar.slug similar.uid %}" class="block w-full bg-green-600 hover:bg-green-700 text-white text-center py-2 px-4 rounded">View Details</a>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-span-4">
+                <p class="text-gray-500 text-center">No similar products found</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const trackClickButton = document.querySelector('.track-click');
+        if (trackClickButton) {
+            trackClickButton.addEventListener('click', function() {
+                const listingId = this.getAttribute('data-listing-id');
+                // Send AJAX request to track click
+                fetch('/track-whatsapp-click/' + listingId + '/', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                        'Content-Type': 'application/json',
+                    },
+                }).then(response => {
+                    console.log('WhatsApp click tracked');
+                }).catch(error => {
+                    console.error('Error tracking WhatsApp click:', error);
+                });
+            });
+        }
+    });
+</script>
+{% endblock %}

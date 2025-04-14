@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Product - MoMarket GH{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <div class="bg-green-700 text-white py-4 px-6">
+            <h2 class="text-2xl font-bold">Add Product Listing</h2>
+            <p class="text-green-100">Post your product to the marketplace</p>
+        </div>
+        <div class="p-6">
+            <form method="post" action="{% url 'create_listing' %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <div class="mb-4">
+                    <label for="id_crop_name" class="block text-gray-700 text-sm font-bold mb-2">Crop Name:</label>
+                    <input type="text" name="crop_name" id="id_crop_name" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                    {% if form.crop_name.errors %}
+                    <p class="text-red-500 text-xs mt-1">{{ form.crop_name.errors }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="mb-4">
+                    <label for="id_description" class="block text-gray-700 text-sm font-bold mb-2">Description:</label>
+                    <textarea name="description" id="id_description" rows="4" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required></textarea>
+                    {% if form.description.errors %}
+                    <p class="text-red-500 text-xs mt-1">{{ form.description.errors }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label for="id_quantity" class="block text-gray-700 text-sm font-bold mb-2">Quantity:</label>
+                        <input type="number" step="0.01" name="quantity" id="id_quantity" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                        {% if form.quantity.errors %}
+                        <p class="text-red-500 text-xs mt-1">{{ form.quantity.errors }}</p>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <label for="id_unit" class="block text-gray-700 text-sm font-bold mb-2">Unit:</label>
+                        <select name="unit" id="id_unit" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                            <option value="">Select Unit</option>
+                            <option value="kg">Kilograms (kg)</option>
+                            <option value="bag">Bags</option>
+                            <option value="ton">Tons</option>
+                            <option value="crate">Crates</option>
+                            <option value="piece">Pieces</option>
+                            <option value="bunch">Bunches</option>
+                            <option value="truck">Truckload</option>
+                        </select>
+                        {% if form.unit.errors %}
+                        <p class="text-red-500 text-xs mt-1">{{ form.unit.errors }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label for="id_price_per_unit" class="block text-gray-700 text-sm font-bold mb-2">Price Per Unit (₵):</label>
+                    <input type="number" step="0.01" name="price_per_unit" id="id_price_per_unit" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                    {% if form.price_per_unit.errors %}
+                    <p class="text-red-500 text-xs mt-1">{{ form.price_per_unit.errors }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label for="id_region" class="block text-gray-700 text-sm font-bold mb-2">Region:</label>
+                        <select name="region" id="id_region" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                            <option value="">Select Region</option>
+                            <option value="Greater Accra">Greater Accra</option>
+                            <option value="Ashanti">Ashanti</option>
+                            <option value="Eastern">Eastern</option>
+                            <option value="Western">Western</option>
+                            <option value="Central">Central</option>
+                            <option value="Northern">Northern</option>
+                            <option value="Upper East">Upper East</option>
+                            <option value="Upper West">Upper West</option>
+                            <option value="Volta">Volta</option>
+                            <option value="Bono">Bono</option>
+                            <option value="Bono East">Bono East</option>
+                            <option value="Ahafo">Ahafo</option>
+                            <option value="Western North">Western North</option>
+                            <option value="Oti">Oti</option>
+                            <option value="Savannah">Savannah</option>
+                            <option value="North East">North East</option>
+                        </select>
+                        {% if form.region.errors %}
+                        <p class="text-red-500 text-xs mt-1">{{ form.region.errors }}</p>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <label for="id_location" class="block text-gray-700 text-sm font-bold mb-2">Town/City:</label>
+                        <input type="text" name="location" id="id_location" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                        {% if form.location.errors %}
+                        <p class="text-red-500 text-xs mt-1">{{ form.location.errors }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <label for="id_photo" class="block text-gray-700 text-sm font-bold mb-2">Add Photo (Optional):</label>
+                    <input type="file" name="photo" id="id_photo" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    {% if form.photo.errors %}
+                    <p class="text-red-500 text-xs mt-1">{{ form.photo.errors }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <button type="submit" class="bg-green-700 hover:bg-green-800 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                        Post Product
+                    </button>
+                    <a href="" class="inline-block align-baseline font-bold text-sm text-gray-700 hover:text-gray-800">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
