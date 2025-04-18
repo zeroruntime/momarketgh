@@ -27,9 +27,24 @@ class ProductListing(models.Model):
             self.uid = uuid.uuid4().hex[:22]
 
         if not self.slug:
-            self.slug = slugify(self.crop_name)
+            base_slug = slugify(self.crop_name)
+            slug = base_slug
+            num = 1
+            while ProductListing.objects.filter(slug=slug).exists():
+                slug = f"{base_slug}-{num}"
+                num += 1
+            self.slug = slug
 
         super().save(*args, **kwargs)
 
     def __str__(self):
         return self.crop_name
+
+
+class ProductPhoto(models.Model):
+    product_listing = models.ForeignKey(ProductListing, on_delete=models.CASCADE, related_name='photos')
+    photo = models.ImageField(upload_to='product_photos/')
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Photo for {self.product_listing.crop_name}"

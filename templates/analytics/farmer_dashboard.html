@@ -132,7 +132,13 @@
       <div class="bg-white rounded-lg shadow overflow-hidden">
         <div class="relative border-b-2 border-green-600">
           <div class="aspect-[4/3] w-full overflow-hidden">
-            <img src="{{ listing.photo.url }}" alt="{{ listing.crop_name }}" class="w-full h-full object-cover object-center" />
+            {% if listing.photo %}
+              <img src="{{ listing.photo.url }}" alt="{{ listing.crop_name }}" class="w-full h-full object-cover object-center" />
+            {% else %}
+              <div class="w-full h-full flex items-center justify-center bg-gray-200 text-gray-500">
+                No Image
+              </div>
+            {% endif %}
           </div>
           {% if listing.is_featured %}
           <span class="absolute top-2 right-2 bg-yellow-400 text-green-800 px-2 py-1 rounded text-xs font-bold">Featured</span>
@@ -154,7 +160,10 @@
           <div class="flex gap-2 mt-3">
             <a href="" class="bg-yellow-300 text-black px-3 py-1 rounded hover:bg-yellow-400 transition flex-1 text-center">Edit</a>
             <!-- <a href="" class="bg-green-100 text-green-800 px-3 py-1 rounded hover:bg-green-200 transition">Stats</a> -->
-            <a href="" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition">Remove</a>
+            <form method="post" action="{% url 'product_delete' listing.id %}" class="flex-1">
+              {% csrf_token %}
+              <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition w-full text-center">Remove</button>
+            </form>
           </div>
         </div>
       </div>
