@@ -1,8 +1,4 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required
-from django.views.decorators.http import require_POST
-from .models import ProductListing
-
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import ProductListingForm 
@@ -21,13 +17,6 @@ def create_listing(request):
             listing = form.save(commit=False)
             listing.user = request.user
             listing.save()
-
-            # Save multiple photos
-            photos = request.FILES.getlist('photos')
-            from .models import ProductPhoto
-            for photo in photos:
-                ProductPhoto.objects.create(product_listing=listing, photo=photo)
-
             messages.success(request, 'Your product has been listed successfully!')
             return redirect('/') 
         else:
@@ -48,10 +37,3 @@ def product_detail(request, slug, uid):
         'similar_products': similar_products,
     }
     return render(request, 'products/product_detail.html', context)
-
-@login_required
-@require_POST
-def product_delete(request, pk):
-    listing = get_object_or_404(ProductListing, pk=pk, user=request.user)
-    listing.delete()
-    return redirect('farmer_dashboard')

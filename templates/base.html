@@ -30,7 +30,7 @@
                     <div class="mr-4">
                         <span class="text-white text-sm">Hello, {% if user.role == 'Farmer' %}<span class="bg-white text-green-700 px-2 py-1 rounded-full font-bold">👨‍🌾 {{ user.username }}</span>{% elif user.role == 'Trader' %}<span class="bg-white text-blue-700 px-2 py-1 rounded-full font-bold">🧑‍💼 {{ user.username }}</span>{% elif user.role == 'Transporter' %}<span class="bg-white text-orange-700 px-2 py-1 rounded-full font-bold">🚚 {{ user.username }}</span>{% endif %}</span>
                     </div>
-                    <a href="{% url 'farmer_dashboard' %}" class="text-white bg-green-600 hover:bg-green-500 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2 mr-2">Dashboard</a>
+                    <a href="" class="text-white bg-green-600 hover:bg-green-500 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2 mr-2">Dashboard</a>
                     <form method="post" action="{% url 'logout' %}" class="inline">
                         {% csrf_token %}
                         <button type="submit" class="text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-4 py-2">
