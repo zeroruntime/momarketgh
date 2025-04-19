@@ -14,12 +14,17 @@
                 {% csrf_token %}
                 
                 <div class="mb-4">
-                    <label for="id_crop_name" class="block text-gray-700 text-sm font-bold mb-2">Crop Name:</label>
-                    <input type="text" name="crop_name" id="id_crop_name" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
-                    {% if form.crop_name.errors %}
-                    <p class="text-red-500 text-xs mt-1">{{ form.crop_name.errors }}</p>
+                    <label for="id_crop" class="block text-gray-700 text-sm font-bold mb-2">Crop:</label>
+                    <select name="crop" id="id_crop" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                      <option value="">Select Crop</option>
+                      {% for crop in crops %}
+                        <option value="{{ crop.id }}">{{ crop.name }}</option>
+                      {% endfor %}
+                    </select>
+                    {% if form.crop.errors %}
+                      <p class="text-red-500 text-xs mt-1">{{ form.crop.errors }}</p>
                     {% endif %}
-                </div>
+                  </div>
 
                 <div class="mb-4">
                     <label for="id_description" class="block text-gray-700 text-sm font-bold mb-2">Description:</label>
@@ -37,22 +42,15 @@
                         <p class="text-red-500 text-xs mt-1">{{ form.quantity.errors }}</p>
                         {% endif %}
                     </div>
-                    <div>
+                    <div class="mb-4">
                         <label for="id_unit" class="block text-gray-700 text-sm font-bold mb-2">Unit:</label>
-                        <select name="unit" id="id_unit" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
-                            <option value="">Select Unit</option>
-                            <option value="kg">Kilograms (kg)</option>
-                            <option value="bag">Bags</option>
-                            <option value="ton">Tons</option>
-                            <option value="crate">Crates</option>
-                            <option value="piece">Pieces</option>
-                            <option value="bunch">Bunches</option>
-                            <option value="truck">Truckload</option>
+                        <select name="unit" id="id_unit" class="shadow border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:shadow-outline" required>
+                          <option value="">Select a crop first</option>
                         </select>
                         {% if form.unit.errors %}
-                        <p class="text-red-500 text-xs mt-1">{{ form.unit.errors }}</p>
+                          <p class="text-red-500 text-xs mt-1">{{ form.unit.errors }}</p>
                         {% endif %}
-                    </div>
+                      </div>
                 </div>
 
                 <div class="mb-4">
@@ -118,4 +116,33 @@
         </div>
     </div>
 </div>
+
+<script>
+    const cropSelect = document.getElementById('id_crop');
+    const unitSelect = document.getElementById('id_unit');
+  
+    const cropUnitsMap = {
+      {% for crop in crops %}
+        "{{ crop.id }}": "{{ crop.common_units }}",
+      {% endfor %}
+    };
+  
+    cropSelect.addEventListener('change', function () {
+      const selectedCropId = this.value;
+      const units = cropUnitsMap[selectedCropId];
+  
+      unitSelect.innerHTML = '<option value="">Select Unit</option>';
+  
+      if (units) {
+        units.split(',').forEach(unit => {
+          const trimmed = unit.trim();
+          const option = document.createElement('option');
+          option.value = trimmed;
+          option.textContent = trimmed;
+          unitSelect.appendChild(option);
+        });
+      }
+    });
+  </script>
+
 {% endblock %}

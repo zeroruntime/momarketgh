@@ -14,7 +14,7 @@ def farmer_dashboard(request):
 
     # Active Listings (with clicks count)
     active_listings = ProductListing.objects.filter(user=user, is_active=True).annotate(
-        view_count=Count('whatsappclick')
+        view_counts=Count('whatsappclick')
     )
 
     # Price Comparisons
@@ -22,18 +22,18 @@ def farmer_dashboard(request):
     product_listings = ProductListing.objects.filter(user=user)
     for listing in product_listings:
         market_avg = PriceHistory.objects.filter(
-            crop_name=listing.crop_name,
+            crop_name=listing.crop.name,
             region=listing.region
         ).order_by('-calculated_on').first()
 
         price_comparisons.append({
-            'name': listing.crop_name,
+            'name': listing.crop.name,
             'your_price': listing.price_per_unit,
             'market_price': market_avg.average_price if market_avg else listing.price_per_unit
         })
 
     # Top Performing Crops
-    top_crops = ProductListing.objects.filter(region=user.region).values('crop_name').annotate(
+    top_crops = ProductListing.objects.filter(region=user.region).values('crop__name').annotate(
         crop_count=Count('id')
     ).order_by('-crop_count')[:5]
 

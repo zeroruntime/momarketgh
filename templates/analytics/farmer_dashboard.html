@@ -1,5 +1,8 @@
 {% extends 'base.html' %}
 
+{% load static %}
+{% block title %}Farmer Dashboard{% endblock %}
+
 {% block content %}
 <div class="bg-green-700 min-h-screen text-white p-4 md:p-6">
   <!-- Header with Profile Summary -->
@@ -59,7 +62,7 @@
         </h3>
         {% for alert in price_alerts %}
         <div class="bg-yellow-50 p-2 rounded mb-2 border-l-4 border-red-400">
-          <p>⚠️ {{ alert.crop_name }} dropped by {{ alert.drop_percent }}%</p>
+          <p>⚠️ {{ alert.crop.name }} dropped by {{ alert.drop_percent }}%</p>
           <p class="text-sm text-gray-600">Current: GHS {{ alert.current_price }} | Was: GHS {{ alert.previous_price }}</p>
         </div>
         {% empty %}
@@ -132,7 +135,11 @@
       <div class="bg-white rounded-lg shadow overflow-hidden">
         <div class="relative border-b-2 border-green-600">
           <div class="aspect-[4/3] w-full overflow-hidden">
-            <img src="{{ listing.photo.url }}" alt="{{ listing.crop_name }}" class="w-full h-full object-cover object-center" />
+            {% if product_listing.photo %}
+                <img src="{{ product_listing.photo.url }}" alt="{{ listing.crop.name }}" class="w-full h-full object-cover object-center">
+            {% else %}
+                <img src="{% static 'images/default.png' %}" alt="Default Photo" class="w-full h-full object-cover object-center">
+            {% endif %}
           </div>
           {% if listing.is_featured %}
           <span class="absolute top-2 right-2 bg-yellow-400 text-green-800 px-2 py-1 rounded text-xs font-bold">Featured</span>
@@ -140,7 +147,7 @@
         </div>
         <div class="p-4 text-black ">
           <div class="flex justify-between items-start">
-            <h3 class="text-lg font-bold text-green-800">{{ listing.crop_name }}</h3>
+            <h3 class="text-lg font-bold text-green-800">{{ listing.crop.name }}</h3>
           </div>
           <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">{{ listing.created_at|timesince }} ago</span>
           <div class="mt-2">
@@ -148,7 +155,7 @@
             <p class="text-sm text-gray-600">Location: {{ listing.region }}</p>
           </div>
           <div class="flex justify-between mt-3 text-sm text-gray-600">
-            <p>👀 {{ listing.view_count }} views</p>
+            <p>👀 {{ listing.view_counts }} views</p>
             <p>📱 {{ listing.whatsapp_clicks }} contacts</p>
           </div>
           <div class="flex gap-2 mt-3">

@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% load multiply %}
+
+{% block content %}
+<div class="py-10">
+  <div class="container mx-auto px-4 sm:px-12 lg:px-8">
+    <div class="flex items-center justify-between mb-6 flex-col sm:flex-row gap-2">
+      <h1 class="text-black text-2xl sm:text-3xl font-bold text-left">{{ crop.name }} Listings</h1>
+      <a href="{% url 'market' %}" class="text-green-700 hover:text-green-800 text-sm sm:text-base">← Back to Categories</a>
+    </div>
+
+    <!-- Filter bar -->
+    <div class="bg-gray-50 p-4 mb-6 rounded-md border border-gray-200">
+      <form method="get" class="flex flex-col sm:flex-row sm:flex-wrap gap-4">
+        <div class="w-full sm:w-auto sm:flex-1 min-w-[200px]">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Region</label>
+          <select name="region" class="w-full rounded-md border-gray-300">
+            <option value="">All Regions</option>
+            {% for region in all_regions %}
+              <option value="{{ region }}" {% if region == selected_region %}selected{% endif %}>{{ region }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="w-full sm:w-32">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Min Quantity</label>
+          <input type="number" name="min_quantity" value="{{ min_quantity }}" placeholder="Any" 
+                class="w-full rounded-md border-gray-300">
+        </div>
+
+        <div class="w-full sm:w-32">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Max Price (₵)</label>
+          <input type="number" name="max_price" value="{{ max_price }}" placeholder="Any" 
+                class="w-full rounded-md border-gray-300">
+        </div>
+
+        <div class="flex items-center justify-start mt-4 sm:mt-0">
+          <button type="submit" class="bg-green-700 text-white px-4 py-2 rounded-md hover:bg-green-800 text-center">
+            Filter
+          </button>
+        </div>
+      </form>
+    </div>
+
+<!-- Section Heading -->
+<div class="mb-6">
+  <h2 class="text-xl font-bold text-gray-800">Available Listings from Farmers</h2>
+  <p class="text-sm text-gray-500">
+    Browse offers from farmers selling <strong>{{ crop.name }}</strong>{% if selected_region %} in <strong>{{ selected_region }}</strong>{% endif %}.
+  </p>
+</div>
+
+<div class="space-y-4">
+  {% for listing in listings %}
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between border border-green-200 bg-green-50 rounded-md p-4 hover:shadow transition">
+
+      <!-- Left: Seller Info -->
+      <div class="mb-2 sm:mb-0">
+        <div class="text-sm font-semibold text-green-800">
+          👨‍🌾 {{ listing.user.full_name }} <span class="text-xs text-gray-500">(Farmer)</span>
+        </div>
+        <div class="text-xs text-gray-500">{{ listing.created_at|date:"M d, Y" }}</div>
+      </div>
+
+      <!-- Middle: Details -->
+      <div class="flex-1 sm:px-6 grid grid-cols-2 sm:grid-cols-3 gap-2 text-sm text-gray-700">
+        <div>
+          <span class="font-medium">Qty:</span> {{ listing.quantity }} {{ listing.unit }}
+          {% if listing.harvest_date %}
+            <div class="text-xs text-gray-500">Harvested: {{ listing.harvest_date|date:"M d" }}</div>
+          {% endif %}
+        </div>
+        <div>
+          <span class="font-medium">Price:</span> GH₵{{ listing.price_per_unit }} / {{ listing.unit }}
+          <div class="text-xs text-gray-500">
+            Total: GH₵{{ listing.price_per_unit|floatformat:2|multiply:listing.quantity|floatformat:2 }}
+          </div>
+        </div>
+        <div>
+          <span class="font-medium">Location:</span> {{ listing.location }}
+          <div class="text-xs text-gray-500">{{ listing.region }}</div>
+        </div>
+      </div>
+
+      <!-- Right: Contact + Link -->
+      <div class="mt-3 sm:mt-0 sm:ml-4 flex flex-row gap-2 items-start sm:items-end">
+        {% include "partials/contact_button.html" with listing=listing %}
+        <a href="{% url 'product_detail' listing.slug listing.uid %}" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none">View Details</a>
+      </div>
+
+    </div>
+  {% empty %}
+    <div class="text-center text-gray-500 text-sm py-6">
+      No listings available for {{ crop.name }} {% if selected_region %}in {{ selected_region }}{% endif %}.
+    </div>
+  {% endfor %}
+</div>
+
+
+
+
+    <!-- Price trends panel -->
+    <div class="mt-8 bg-white p-4 rounded-md border border-gray-200">
+      <h2 class="text-lg font-medium mb-4">{{ crop.name }} Price Trends</h2>
+      <div class="text-sm text-gray-500">
+        Average price: GH₵{{ average_price|default:"N/A" }} per {{ crop.common_units.split|first }}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WhatsApp click tracking script -->
+<script>
+function trackWhatsAppClick(listingId) {
+  fetch('/api/track-whatsapp-click/', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+    },
+    body: JSON.stringify({ listing_id: listingId })
+  });
+}
+</script>
+{% endblock %}

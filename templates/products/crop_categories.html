@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+
+{% block content %}
+<div class="py-10">
+  <div class="container mx-auto px-4 sm:px-12 lg:px-8">
+    <!-- Header with improved semantics -->
+    <header class="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-8 gap-4">
+        <div class="flex items-center mb-8 lg:mb-0">
+          <div class="bg-gray-200 w-12 h-12 rounded-md mr-4" role="presentation" aria-hidden="true">
+            <img src="{% static 'icons/market.svg' %}" alt="Logo" class="w-full h-full object-contain">
+          </div>
+          <h1 class="text-black text-2xl font-bold">Marketplace</h1>
+        </div>
+      
+        <form class="flex items-center w-full sm:w-auto gap-4" action="/search" method="GET">
+            <label for="crop-search" class="sr-only">Search crops</label>
+            
+            <input
+              type="search"
+              id="crop-search"
+              name="q"
+              placeholder="Search crops..."
+              class="w-full sm:w-64 px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500 focus:outline-none"
+            />
+          
+            <button type="submit" class="bg-gray-200 w-12 h-12 rounded-full shrink-0 flex items-center justify-center">
+              <i class="fa-solid fa-magnifying-glass text-gray-500"></i>
+            </button>
+          </form>
+          
+      </header>
+    
+
+    <nav class="mb-6 border-b border-gray-200 overflow-x-auto" role="navigation" aria-label="Crop categories">
+        <ul class="flex flex-nowrap space-x-4 min-w-full px-1 sm:px-0">
+          {% for category in categories %}
+            <li>
+              <a href="#category-{{ category.id }}"
+                 class="inline-block py-2 px-4 whitespace-nowrap border-b-2 text-gray-700 transition 
+                        {% if forloop.first %}border-green-600 text-green-600 font-medium{% else %}border-transparent hover:text-green-600 hover:border-green-600{% endif %} 
+                        focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                 {% if forloop.first %}aria-current="page"{% endif %}>
+                {{ category.name }}
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      </nav>
+
+    {% for category in categories %}
+      <section id="category-{{ category.id }}" class="mb-10">
+        <h2 class="text-black text-3xl font-bold mb-6 pt-2">{{ category.name }}</h2>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {% for crop in category.crops.all %}
+            <article class="border border-gray-300 rounded-md p-4 hover:shadow-md focus-within:ring-2 focus-within:ring-green-500 transition">
+              <a href="{% url 'crop_listings' crop.slug %}" class="group block focus:outline-none" 
+                 aria-label="{{ crop.name }} - {{ crop.active_listings_count }} listing{{ crop.active_listings_count|pluralize }}">
+                <div class="flex items-center">
+                  <!-- Crop icon with alt text -->
+                  <div class="w-16 h-16 rounded-md mr-4 overflow-hidden" aria-hidden="true">
+                    <img src="{% static 'icons/crops/' %}{{ crop.slug }}.svg" 
+                    alt="{{ crop.name }}" 
+                    class="w-full h-full object-contain" 
+                    onerror="this.onerror=null;this.src='{% static 'icons/crops/default.svg' %}';">
+                  </div>
+                  <div>
+                    <h3 class="text-black text-xl font-medium group-hover:text-green-600 transition">{{ crop.name }}</h3>
+                    <p class="text-gray-600 text-sm mt-1">
+                      <span class="font-medium">{{ crop.active_listings_count }}</span> listing{{ crop.active_listings_count|pluralize }} available
+                    </p>
+                  </div>
+                </div>
+              </a>
+            </article>
+          {% empty %}
+            <div class="col-span-full text-gray-500 py-6 text-center border border-gray-200 rounded-md bg-gray-50">
+              No crops available in this category yet
+            </div>
+          {% endfor %}
+        </div>
+      </section>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
