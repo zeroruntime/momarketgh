@@ -92,7 +92,7 @@ WSGI_APPLICATION = 'momarket.wsgi.application'
 #     }
 # }
 DATABASES = {
-    'default': dj_database_url.config(default='your_default_database_url')
+    'default': dj_database_url.config(default='postgresql://momarket_user:cEFvaqP23K2LawGz8fIe3CJtqdOupYt1@dpg-d023b6be5dus73bcuqhg-a/momarket')
 }
 
 
