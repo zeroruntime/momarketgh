@@ -6,18 +6,18 @@ from django.db.models import Count
 
 @login_required
 def farmer_dashboard(request):
-    # ✅ Ensure the user is a Farmer
+    # ensure the user is a Farmer
     if request.user.role != 'Farmer':
-        return redirect('unauthorized')  # or return a 403 page
+        return redirect('unauthorized')
 
     user = request.user
 
-    # Active Listings (with clicks count)
+    # shows active listings and counts clicks 
     active_listings = ProductListing.objects.filter(user=user, is_active=True).annotate(
         view_counts=Count('whatsappclick')
     )
 
-    # Price Comparisons
+    # compares the prices of the user's listings with the market average
     price_comparisons = []
     product_listings = ProductListing.objects.filter(user=user)
     for listing in product_listings:
@@ -32,12 +32,12 @@ def farmer_dashboard(request):
             'market_price': market_avg.average_price if market_avg else listing.price_per_unit
         })
 
-    # Top Performing Crops
+    # logic for showing the top performing crops based on the number of active listings in the user's region
     top_crops = ProductListing.objects.filter(region=user.region).values('crop__name').annotate(
         crop_count=Count('id')
     ).order_by('-crop_count')[:5]
 
-    # Views & Clicks Chart
+    # logic for showing the number of clicks on the user's listings over the last 7 day and the number of clicks on the WhatsApp link
     days_ago_7 = now() - timedelta(days=7)
     labels = []
     views_data = []

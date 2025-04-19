@@ -164,6 +164,9 @@ def profile_update(request):
     
     return render(request, 'accounts/profile_update.html', context)
 
+def unauthorized_view(request):
+    return render(request, "accounts/403.html", status=403)
+
 # def farmer_list(request):
 #     farmers = User.objects.filter(role='Farmer')
 #     return render(request, 'accounts/farmer_list.html', {'farmers': farmers})

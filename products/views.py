@@ -85,6 +85,15 @@ def track_whatsapp_click(request):
 #     products = ProductListing.objects.filter(is_active=True).select_related('user').order_by('-created_at')
 #     return render(request, 'products/market.html', {'products': products})
 
+def ajax_crop_search(request):
+    query = request.GET.get('q', '')
+    results = []
+    
+    if query:
+        matches = Crop.objects.filter(name__icontains=query)[:5]
+        results = [{'id': crop.id, 'name': crop.name, 'slug': crop.slug} for crop in matches]
+    
+    return JsonResponse({'results': results})
  
 @login_required
 def create_listing(request):

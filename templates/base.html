@@ -39,14 +39,16 @@
       
           <!-- Full Menu (toggled on mobile) -->
           <div class="hidden w-full lg:flex lg:w-auto" id="navbar-menu">
-            <div class="flex flex-col lg:flex-row lg:items-center lg:space-x-6 w-full text-white font-medium">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:space-x-6 w-full text-white font-medium justify-center">
               
               <!-- Nav Links -->
               <div class="flex flex-col lg:flex-row lg:space-x-6">
+                <div class=" flex flex-row justify-center items-center lg:space-x-6 ">
                 <a href="{% url 'home' %}" class="block px-3 py-2 hover:bg-green-600 lg:hover:bg-transparent lg:p-0">Home</a>
                 <a href="{% url 'market' %}" class="block px-3 py-2 hover:bg-green-600 lg:hover:bg-transparent lg:p-0">Market</a>
                 <a href="#" class="block px-3 py-2 hover:bg-green-600 lg:hover:bg-transparent lg:p-0">Price Dashboard</a>
-          
+                </div>
+
                 {% if user.is_authenticated and user.role == 'Farmer' %}
                   <a href="{% url 'create_listing' %}" class="block px-3 py-2 hover:bg-green-600 lg:hover:bg-transparent lg:p-0">Add Product</a>
                 {% endif %}
@@ -161,6 +163,8 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/js/all.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
 
     <script>
         const toggleButton = document.querySelector('[data-collapse-toggle]');

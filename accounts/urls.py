@@ -13,6 +13,9 @@ urlpatterns = [
     # Profiles
     path('profile/', views.profile_view, name='profile'),
     path('profile/update/', views.profile_update, name='profile_update'),
+
+    path('unauthorized/', views.unauthorized_view, name='unauthorized'),
+
     
     # Role-specific views
     # path('farmers/', views.farmer_list, name='farmer_list'),

@@ -30,6 +30,7 @@ urlpatterns = [
     path('api/track-whatsapp-click/', views.track_whatsapp_click, name='track_whatsapp_click'),
     path('create-listing/', views.create_listing, name='create_listing'),
     path('products/<slug:slug>-<str:uid>/', views.product_detail, name='product_detail'),
+    path('ajax/crop-search/', views.ajax_crop_search, name='ajax_crop_search'),
 
 
 ]

@@ -15,21 +15,45 @@
           <h1 class="text-black text-2xl font-bold">Marketplace</h1>
         </div>
       
-        <form class="flex items-center w-full sm:w-auto gap-4" action="/search" method="GET">
-            <label for="crop-search" class="sr-only">Search crops</label>
-            
-            <input
-              type="search"
-              id="crop-search"
-              name="q"
+        <div x-data="{
+            query: '',
+            results: [],
+            searchUrl: '{% url 'ajax_crop_search' %}',
+            async search() {
+              if (this.query.length < 2) {
+                this.results = [];
+                return;
+              }
+              let res = await fetch(`${this.searchUrl}?q=${encodeURIComponent(this.query)}`);
+              let data = await res.json();
+              this.results = data.results;
+            }
+          }" class="relative w-full sm:w-auto">
+          <label for="crop-search" class="sr-only">Search crops</label>
+
+          <div class="flex items-center w-full sm:w-80">
+            <input x-model="query" @input.debounce.300ms="search" id="crop-search" type="search" name="q"
               placeholder="Search crops..."
-              class="w-full sm:w-64 px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500 focus:outline-none"
-            />
-          
+              class="w-full sm:w-64 px-4 py-2 mr-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500 focus:outline-none"
+              autocomplete="off" />
+
             <button type="submit" class="bg-gray-200 w-12 h-12 rounded-full shrink-0 flex items-center justify-center">
               <i class="fa-solid fa-magnifying-glass text-gray-500"></i>
             </button>
-          </form>
+          </div>
+
+          <!-- Dropdown results -->
+          <ul x-show="results.length" @click.away="results = []"
+            class="absolute mt-2 bg-white text-black rounded-md shadow w-full z-20">
+            <template x-for="item in results" :key="item.id">
+              <li class="px-4 py-2 hover:bg-green-100 cursor-pointer">
+                <a :href="`/products/crop/${item.slug}/`" x-text="item.name"></a>
+              </li>
+            </template>
+          </ul>
+        </div>
+
+
           
       </header>
     
