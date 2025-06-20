@@ -12,3 +12,4 @@ class User(AbstractUser):
     role = models.CharField(max_length=20, choices=ROLE_CHOICES)
     region = models.CharField(max_length=100)
     location = models.CharField(max_length=255)
+    profile_photo = models.ImageField(upload_to='profile_photos/', null=True, blank=True)

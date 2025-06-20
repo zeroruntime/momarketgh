@@ -2,19 +2,35 @@
 {% load multiply %}
 
 {% block content %}
-<div class="py-10">
-  <div class="container mx-auto px-4 sm:px-12 lg:px-8">
-    <div class="flex items-center justify-between mb-6 flex-col sm:flex-row gap-2">
-      <h1 class="text-black text-2xl sm:text-3xl font-bold text-left">{{ crop.name }} Listings</h1>
-      <a href="{% url 'market' %}" class="text-green-700 hover:text-green-800 text-sm sm:text-base">← Back to Categories</a>
+<div class="py-8">
+  <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Page Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+      <div>
+        <div class="flex items-center gap-3 mb-2">
+          <a href="{% url 'market' %}" class="text-green-600 hover:text-green-800 transition">
+            <i class="fas fa-arrow-left"></i>
+          </a>
+          <h1 class="text-2xl md:text-3xl font-bold text-gray-800">{{ crop.name }} Listings</h1>
+        </div>
+        <p class="text-gray-600">Browse available {{ crop.name }} from farmers across Ghana</p>
+      </div>
+      
+      {% if user.is_authenticated and user.role == 'Farmer' %}
+      <a href="{% url 'create_listing' %}" 
+         class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition">
+        <i class="fas fa-plus mr-2"></i> Add Your Listing
+      </a>
+      {% endif %}
     </div>
 
-    <!-- Filter bar -->
-    <div class="bg-gray-50 p-4 mb-6 rounded-md border border-gray-200">
-      <form method="get" class="flex flex-col sm:flex-row sm:flex-wrap gap-4">
-        <div class="w-full sm:w-auto sm:flex-1 min-w-[200px]">
+    <!-- Filter Section -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 mb-8">
+      <form method="get" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <!-- Region Filter -->
+        <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">Region</label>
-          <select name="region" class="w-full rounded-md border-gray-300">
+          <select name="region" class="w-full rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500">
             <option value="">All Regions</option>
             {% for region in all_regions %}
               <option value="{{ region }}" {% if region == selected_region %}selected{% endif %}>{{ region }}</option>
@@ -22,107 +38,198 @@
           </select>
         </div>
 
-        <div class="w-full sm:w-32">
-          <label class="block text-sm font-medium text-gray-700 mb-1">Min Quantity</label>
-          <input type="number" name="min_quantity" value="{{ min_quantity }}" placeholder="Any" 
-                class="w-full rounded-md border-gray-300">
-        </div>
-
-        <div class="w-full sm:w-32">
+        <!-- Price Range -->
+        <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">Max Price (₵)</label>
           <input type="number" name="max_price" value="{{ max_price }}" placeholder="Any" 
-                class="w-full rounded-md border-gray-300">
+                class="w-full rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500">
         </div>
 
-        <div class="flex items-center justify-start mt-4 sm:mt-0">
-          <button type="submit" class="bg-green-700 text-white px-4 py-2 rounded-md hover:bg-green-800 text-center">
-            Filter
+        <!-- Quantity Filter -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Min Quantity</label>
+          <input type="number" name="min_quantity" value="{{ min_quantity }}" placeholder="Any" 
+                class="w-full rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500">
+        </div>
+
+        <!-- Filter Button -->
+        <div class="flex items-end">
+          <button type="submit" 
+                  class="w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg transition flex items-center justify-center">
+            <i class="fas fa-filter mr-2"></i> Apply Filters
           </button>
         </div>
       </form>
     </div>
 
-<!-- Section Heading -->
-    <div class="mb-6">
-      <h2 class="text-xl font-bold text-gray-800">Available Listings from Farmers</h2>
-      <p class="text-sm text-gray-500">
-        Browse offers from farmers selling <strong>{{ crop.name }}</strong>{% if selected_region %} in <strong>{{ selected_region }}</strong>{% endif %}.
-      </p>
-    </div>
-
-<div class="space-y-4">
-  {% for listing in listings %}
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between border border-green-200 bg-green-50 rounded-md p-4 hover:shadow transition">
-
-      <div class="mb-2 sm:mb-0">
-        <div class="text-lg font-semibold text-green-800">
-          👨‍🌾 {{ listing.user.full_name }} <span class="text-sm text-gray-500">(Farmer)</span>
-        </div>
-        <div class="text-sm text-gray-500">{{ listing.created_at|date:"M d, Y" }}</div>
-      </div>
-
-      <div class="flex-1 sm:px-6 grid grid-cols-2 sm:grid-cols-3 gap-2 text-md text-gray-700">
-        <div>
-          <span class="font-medium">Qty:</span> {{ listing.quantity }} {{ listing.unit }}
-          {% if listing.harvest_date %}
-            <div class="text-xs text-gray-500">Harvested: {{ listing.harvest_date|date:"M d" }}</div>
+    <!-- Results Summary -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-3">
+      <div>
+        <h2 class="text-xl font-semibold text-gray-800">
+          {% if listings|length > 0 %}
+            {{ listings|length }} listing{{ listings|pluralize }} available
+          {% else %}
+            No listings found
           {% endif %}
-        </div>
-        <div>
-          <span class="font-medium">Price:</span> GH₵{{ listing.price_per_unit }} / {{ listing.unit }}
-          <div class="text-xs text-gray-500">
-            Total: GH₵{{ listing.price_per_unit|floatformat:2|multiply:listing.quantity|floatformat:2 }}
-          </div>
-        </div>
-        <div>
-          <span class="font-medium">Location:</span> {{ listing.location }}
-          <div class="text-xs text-gray-500">{{ listing.region }}</div>
-        </div>
+        </h2>
+        <p class="text-sm text-gray-500">
+          {% if selected_region %}
+            Showing results for {{ crop.name }} in {{ selected_region }}
+          {% else %}
+            Showing all {{ crop.name }} listings
+          {% endif %}
+        </p>
       </div>
-
-      {% if not user.is_authenticated %}
-        <div class="mt-3 sm:mt-0 sm:ml-4 flex flex-row gap-2 items-start sm:items-end">
-          {% include "partials/contact_button.html" with listing=listing %}
-          <a href="{% url 'login' %}" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none">View Details</a>
-        </div>
-      {% else %}
-            <div class="mt-3 sm:mt-0 sm:ml-4 flex flex-row gap-2 items-start sm:items-end">
-        {% include "partials/contact_button.html" with listing=listing %}
-        <a href="{% url 'product_detail' listing.slug listing.uid %}" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none">View Details</a>
+      
+      {% if average_price %}
+      <div class="bg-green-50 border border-green-100 rounded-lg px-4 py-2">
+        <p class="text-sm text-gray-700">
+          <span class="font-medium">Average Price:</span> 
+          <span class="text-green-700 font-bold">GH₵{{ average_price|floatformat:2 }}</span> 
+          per {{ crop.common_units.split|first }}
+        </p>
       </div>
       {% endif %}
-
-
-
     </div>
-  {% empty %}
-    <div class="text-center text-gray-500 text-lg py-6">
-      No listings available for {{ crop.name }} {% if selected_region %}in {{ selected_region }}{% endif %}.
+
+    <!-- Listings Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {% for listing in listings %}
+      <div class="bg-white rounded-xl shadow-sm hover:shadow-md border border-gray-200 overflow-hidden transition-all duration-300">
+        <!-- Listing Image -->
+        <div class="relative">
+          <img src="{{ listing.photo.url|default:'/static/images/default.png' }}" 
+               alt="{{ crop.name }}" 
+               class="w-full h-48 object-cover">
+        <div class="absolute top-2 right-2 bg-white px-2 py-1 rounded-full shadow text-xs font-semibold text-green-600">
+          GH₵{{ listing.price_per_unit }}
+        </div>
+        </div>
+
+        <!-- Listing Details -->
+        <div class="p-5">
+          <div class="flex justify-between items-start mb-2">
+            <h3 class="text-lg font-bold text-gray-800">{{ crop.name }}</h3>
+            {% comment %} <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
+              {{ listing.get_quality_display }}
+            </span> {% endcomment %}
+          </div>
+
+          <!-- Farmer Info -->
+          <div class="flex items-center mb-3">
+            {% if listing.user.profile_photo %}
+              <img src="{{ listing.user.profile_photo.url }}" 
+                   class="w-8 h-8 rounded-full object-cover mr-2 border border-gray-200">
+            {% else %}
+              <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 mr-2">
+                <i class="fas fa-user text-xs"></i>
+              </div>
+            {% endif %}
+            <div>
+              <p class="text-sm font-medium text-gray-700">{{ listing.user.full_name }}</p>
+              <p class="text-xs text-gray-500">Farmer</p>
+            </div>
+          </div>
+
+          <!-- Listing Metadata -->
+          <div class="space-y-2 text-sm text-gray-600 mb-4">
+            <div class="flex items-center">
+              <i class="fas fa-box text-gray-400 mr-2 w-4"></i>
+              <span>{{ listing.quantity }} {{ listing.unit }} available</span>
+            </div>
+            <div class="flex items-center">
+              <i class="fas fa-calendar-alt text-gray-400 mr-2 w-4"></i>
+              <span>Harvested {{ listing.harvest_date|date:"M d, Y" }}</span>
+            </div>
+            <div class="flex items-center">
+              <i class="fas fa-map-marker-alt text-gray-400 mr-2 w-4"></i>
+              <span>{{ listing.location }}, {{ listing.region }}</span>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex justify-between items-center pt-3 border-t border-gray-100">
+            <a href="{% url 'start_chat' listing.uid %}"
+               class="flex-1 mr-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium py-2 px-3 rounded-lg text-center transition">
+              <i class="fab fa-messagez mr-1"></i> Contact
+            </a>
+            <a href="{% url 'product_detail' listing.slug listing.uid %}"
+               class="flex-1 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 text-sm font-medium py-2 px-3 rounded-lg text-center transition">
+              Details
+            </a>
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <div class="col-span-full py-12 text-center">
+        <div class="mx-auto w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+          <i class="fas fa-seedling text-2xl text-gray-400"></i>
+        </div>
+        <h3 class="text-lg font-medium text-gray-700 mb-2">No listings available</h3>
+        <p class="text-gray-500 mb-4">
+          There are currently no {{ crop.name }} listings {% if selected_region %}in {{ selected_region }}{% endif %}.
+        </p>
+        {% if user.is_authenticated and user.role == 'Farmer' %}
+        <a href="{% url 'create_listing' %}" 
+           class="inline-block bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-6 rounded-lg transition">
+          Add Your Listing
+        </a>
+        {% endif %}
+      </div>
+      {% endfor %}
     </div>
-  {% endfor %}
-</div>
 
-
-
-
-    <!-- Price trends panel -->
-    <div class="mt-8 bg-white p-4 rounded-md border border-gray-200">
-      <h2 class="text-lg font-medium mb-4">{{ crop.name }} Price Trends</h2>
-      <div class="text-sm text-gray-500">
-        Average price: GH₵{{ average_price|default:"N/A" }} per {{ crop.common_units.split|first }}
+    <!-- Price Trends Section -->
+    {% if price_history %}
+    <div class="mt-12 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-semibold text-gray-800">{{ crop.name }} Price Trends</h2>
+        <div class="flex items-center text-sm">
+          <span class="mr-2 text-gray-500">Last 30 days</span>
+          <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">
+            <i class="fas fa-chart-line mr-1"></i> {{ price_trend }}%
+          </span>
+        </div>
+      </div>
+      
+      <!-- Chart Placeholder -->
+      <div class="bg-gray-50 rounded-lg h-64 flex items-center justify-center text-gray-400">
+        <i class="fas fa-chart-bar text-3xl mr-2"></i>
+        Price Chart Visualization
+      </div>
+      
+      <div class="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+        <div class="bg-gray-50 p-3 rounded-lg">
+          <p class="text-gray-500">Current Avg</p>
+          <p class="font-bold text-green-700">GH₵{{ current_avg_price|floatformat:2 }}</p>
+        </div>
+        <div class="bg-gray-50 p-3 rounded-lg">
+          <p class="text-gray-500">30-day High</p>
+          <p class="font-bold text-gray-700">GH₵{{ monthly_high|floatformat:2 }}</p>
+        </div>
+        <div class="bg-gray-50 p-3 rounded-lg">
+          <p class="text-gray-500">30-day Low</p>
+          <p class="font-bold text-gray-700">GH₵{{ monthly_low|floatformat:2 }}</p>
+        </div>
+        <div class="bg-gray-50 p-3 rounded-lg">
+          <p class="text-gray-500">Price Trend</p>
+          <p class="font-bold {% if price_trend > 0 %}text-red-600{% else %}text-green-600{% endif %}">
+            {% if price_trend > 0 %}+{% endif %}{{ price_trend }}%
+          </p>
+        </div>
       </div>
     </div>
+    {% endif %}
   </div>
 </div>
 
-<!-- WhatsApp click tracking script -->
 <script>
 function trackWhatsAppClick(listingId) {
   fetch('/api/track-whatsapp-click/', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+      'X-CSRFToken': '{{ csrf_token }}'
     },
     body: JSON.stringify({ listing_id: listingId })
   });

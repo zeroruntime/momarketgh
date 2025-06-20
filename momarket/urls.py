@@ -26,6 +26,7 @@ urlpatterns = [
     path('analytics/', include('analytics.urls')),
     path('transport/', include('transport.urls')),
     path('admin-dashboard/', include('admin_dashboard.urls')),
+    path('chat/', include('chat.urls')),
     path('', include('core.urls')),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

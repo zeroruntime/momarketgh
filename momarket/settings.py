@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
 
     'widget_tweaks',
     
@@ -48,6 +49,7 @@ INSTALLED_APPS = [
     'analytics',
     'transport',
     'admin_dashboard',
+    'chat'
 ]
 
 MIDDLEWARE = [
@@ -85,15 +87,15 @@ WSGI_APPLICATION = 'momarket.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
 DATABASES = {
-    'default': dj_database_url.config(default='postgresql://momarket_user:cEFvaqP23K2LawGz8fIe3CJtqdOupYt1@dpg-d023b6be5dus73bcuqhg-a/momarket')
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
+# DATABASES = {
+#     'default': dj_database_url.config(default='postgresql://momarket_user:cEFvaqP23K2LawGz8fIe3CJtqdOupYt1@dpg-d023b6be5dus73bcuqhg-a/momarket')
+# }
 
 
 # Password validation

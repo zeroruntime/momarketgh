@@ -11,7 +11,7 @@ from django.contrib.auth.views import LogoutView
 
 def register(request):
     if request.method == 'POST':
-        # Get form data
+        # get form data
         username = request.POST.get('username')
         password1 = request.POST.get('password1')
         password2 = request.POST.get('password2')
@@ -20,8 +20,10 @@ def register(request):
         role = request.POST.get('role')
         region = request.POST.get('region')
         location = request.POST.get('location')
+        profile_photo = request.FILES.get('profile_photo')
 
-        # Validate passwords match
+
+        # validate passwords match
         if password1 != password2:
             messages.error(request, "Passwords do not match.")
             return render(request, 'accounts/register.html', {
@@ -33,7 +35,7 @@ def register(request):
                 'location': location,
             })
 
-        # Check if username exists
+        # check if username exists
         if User.objects.filter(username=username).exists():
             messages.error(request, "Username is already taken.")
             return render(request, 'accounts/register.html', {
@@ -45,7 +47,7 @@ def register(request):
                 'location': location,
             })
 
-        # Create user
+        # create user
         user = User.objects.create_user(
             username=username,
             password=password1,
@@ -53,7 +55,8 @@ def register(request):
             phone_number=phone_number,
             role=role,
             region=region,
-            location=location
+            location=location,
+            profile_photo=profile_photo
         )
 
         user.is_active = True
@@ -135,6 +138,10 @@ def profile_update(request):
         if new_password:
             user.set_password(new_password)
         
+        user.save()
+
+        if 'profile_photo' in request.FILES:
+            user.profile_photo = request.FILES['profile_photo']
         user.save()
         
         # Update transporter profile if applicable

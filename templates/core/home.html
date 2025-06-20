@@ -11,8 +11,15 @@
     <div class="bg-green-700 text-white rounded-lg shadow-xl overflow-hidden">
         <div class="container mx-auto px-6 py-12 md:flex md:items-center md:justify-between">
             <div class="md:w-1/2 mb-8 md:mb-0 sm:ml-8 ml-0">
-                <h1 class="text-4xl sm:text-5xl font-bold mb-4">Connect. Trade. Grow.</h1>
-                <p class="text-xl mb-6">Ghana's premier digital marketplace connecting farmers, traders, and transporters — without middlemen.</p>
+                    <span class="inline-block px-4 py-1 bg-white text-green-800 rounded-full text-sm font-semibold mb-4">
+                        Ghana's #1 Agro Marketplace
+                    </span>
+               <h1 class="text-4xl sm:text-4xl lg:text-5xl font-bold leading-tight mb-4">
+                        Trade <span class="text-yellow-300">Directly</span> Without Middlemen
+                    </h1>
+                    <p class="text-lg sm:text-xl text-green-100 max-w-lg mb-8">
+                        Connecting farmers, traders and transporters across Ghana with our digital marketplace.
+                    </p>
                 <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
                     <a href="{% url 'register' %}" class="bg-yellow-300 hover:bg-yellow-600 text-green-900 font-bold py-3 px-6 rounded-lg text-center">Join MoMarket Today</a>
                     <a href="{% url 'market' %}" class="bg-white hover:bg-gray-100 text-green-700 font-bold py-3 px-6 rounded-lg text-center">Browse Market</a>
@@ -25,36 +32,141 @@
     </div>
 
     <!-- How It Works -->
-    <div class="mt-16">
-        <h2 class="text-3xl font-bold text-center mb-8">How MoMarket GH Works</h2>
-        <div class="grid md:grid-cols-3 gap-8">
-            <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-green-500">
-                <div class="text-4xl mb-4">👨‍🌾</div>
-                <h3 class="text-xl font-bold mb-2 text-green-700">For Farmers</h3>
-                <p class="text-gray-600">List your crops, set fair prices, and connect directly with buyers. Track market trends to maximize your profits.</p>
-                <a href="{% url 'register' %}?role=Farmer" class="block mt-4 text-green-600 hover:text-green-800 font-medium">Register as Farmer →</a>
+<div class="mt-16 mb-20">
+    <h2 class="text-3xl font-bold text-center mb-4">How MoMarket GH Works</h2>
+    <p class="text-center text-gray-600 max-w-2xl mx-auto mb-12">Our platform simplifies agricultural trade with a seamless three-step process for all users</p>
+    
+    <div class="relative mt-6">
+        <!-- Progress line -->
+        <div class="hidden md:block absolute left-0 right-0 top-1/2 h-1 bg-gray-200 transform -translate-y-1/2"></div>
+        
+        <div class="grid md:grid-cols-3 gap-8 md:gap-4 relative z-10">
+            <!-- Step 1 -->
+            <div class="bg-white p-8 rounded-xl shadow-lg border border-gray-100 transform transition-all hover:scale-105 hover:shadow-xl">
+                <div class="flex flex-col items-center text-center">
+                    <div class="relative mb-6">
+                        <div class="absolute -inset-4 bg-green-100 rounded-full opacity-30"></div>
+                        <div class="relative w-16 h-16 rounded-full bg-green-600 flex items-center justify-center text-white text-2xl font-bold">
+                            1
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-green-700">Create Your Profile</h3>
+                    <p class="text-gray-600 mb-4">Sign up as a farmer, trader, or transporter in just 2 minutes. Tell us about your products, needs, or services.</p>
+                    <div class="mt-auto">
+                        <div class="inline-flex items-center px-4 py-2 bg-green-50 text-green-700 rounded-full text-sm font-medium">
+                            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
+                                <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
+                            </svg>
+                            Get Started
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-blue-500">
-                <div class="text-4xl mb-4">🧑‍💼</div>
-                <h3 class="text-xl font-bold mb-2 text-blue-700">For Traders</h3>
-                <p class="text-gray-600">Browse listings from multiple regions, compare prices, and contact farmers directly via WhatsApp.</p>
-                <a href="{% url 'register' %}?role=Trader" class="block mt-4 text-blue-600 hover:text-blue-800 font-medium">Register as Trader →</a>
+            
+            <!-- Step 2 -->
+            <div class="bg-white p-8 rounded-xl shadow-lg border border-gray-100 transform transition-all hover:scale-105 hover:shadow-xl">
+                <div class="flex flex-col items-center text-center">
+                    <div class="relative mb-6">
+                        <div class="absolute -inset-4 bg-blue-100 rounded-full opacity-30"></div>
+                        <div class="relative w-16 h-16 rounded-full bg-blue-600 flex items-center justify-center text-white text-2xl font-bold">
+                            2
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-blue-700">Connect Directly</h3>
+                    <p class="text-gray-600 mb-4">Farmers list products, traders browse offers, and transporters share availability - all with direct messaging.</p>
+                    <div class="mt-auto">
+                        <div class="inline-flex items-center px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">
+                            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z"/>
+                                <path d="M15 7v2a4 4 0 01-4 4H9.828l-1.766 1.767c.28.149.599.233.938.233h2l3 3v-3h2a2 2 0 002-2V9a2 2 0 00-2-2h-1z"/>
+                            </svg>
+                            Start Connecting
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-orange-500">
-                <div class="text-4xl mb-4">🚚</div>
-                <h3 class="text-xl font-bold mb-2 text-orange-700">For Transporters</h3>
-                <p class="text-gray-600">Create a profile with your vehicle types and routes. Get contacted directly by farmers and traders.</p>
-                <a href="{% url 'register' %}?role=Transporter" class="block mt-4 text-orange-600 hover:text-orange-800 font-medium">Register as Transporter →</a>
+            
+            <!-- Step 3 -->
+            <div class="bg-white p-8 rounded-xl shadow-lg border border-gray-100 transform transition-all hover:scale-105 hover:shadow-xl">
+                <div class="flex flex-col items-center text-center">
+                    <div class="relative mb-6">
+                        <div class="absolute -inset-4 bg-orange-100 rounded-full opacity-30"></div>
+                        <div class="relative w-16 h-16 rounded-full bg-orange-500 flex items-center justify-center text-white text-2xl font-bold">
+                            3
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-orange-700">Grow Your Business</h3>
+                    <p class="text-gray-600 mb-4">Complete transactions, build lasting relationships, and access market insights to maximize your profits.</p>
+                    <div class="mt-auto">
+                        <div class="inline-flex items-center px-4 py-2 bg-orange-50 text-orange-700 rounded-full text-sm font-medium">
+                            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd"/>
+                            </svg>
+                            See Results
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+    
+    <!-- Role-Specific CTAs -->
+    <div class="grid md:grid-cols-3 gap-6 mt-12 max-w-4xl mx-auto">
+        <a href="{% url 'register' %}?role=Farmer" class="group bg-green-50 hover:bg-green-100 p-4 rounded-lg border border-green-100 transition-all">
+            <div class="flex items-center">
+                <div class="p-3 rounded-lg bg-green-600 text-white mr-4 group-hover:bg-green-700 transition-all">
+                    <i class="fas fa-seedling text-xl"></i>
+                </div>
+                <div>
+                    <h4 class="font-bold text-green-800">For Farmers</h4>
+                    <p class="text-sm text-green-600">Sell directly to buyers</p>
+                </div>
+                <div class="ml-auto text-green-400 group-hover:text-green-600">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+        </a>
+        
+        <a href="{% url 'register' %}?role=Trader" class="group bg-blue-50 hover:bg-blue-100 p-4 rounded-lg border border-blue-100 transition-all">
+            <div class="flex items-center">
+                <div class="p-3 rounded-lg bg-blue-600 text-white mr-4 group-hover:bg-blue-700 transition-all">
+                    <i class="fas fa-handshake text-xl"></i>
+                </div>
+                <div>
+                    <h4 class="font-bold text-blue-800">For Traders</h4>
+                    <p class="text-sm text-blue-600">Source quality products</p>
+                </div>
+                <div class="ml-auto text-blue-400 group-hover:text-blue-600">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+        </a>
+        
+        <a href="{% url 'register' %}?role=Transporter" class="group bg-orange-50 hover:bg-orange-100 p-4 rounded-lg border border-orange-100 transition-all">
+            <div class="flex items-center">
+                <div class="p-3 rounded-lg bg-orange-500 text-white mr-4 group-hover:bg-orange-600 transition-all">
+                    <i class="fas fa-truck text-xl"></i>
+                </div>
+                <div>
+                    <h4 class="font-bold text-orange-800">For Transporters</h4>
+                    <p class="text-sm text-orange-600">Find transport jobs</p>
+                </div>
+                <div class="ml-auto text-orange-400 group-hover:text-orange-600">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+        </a>
+    </div>
+</div>
 
     <!-- Featured Products -->
     <div class="mt-16">
-        <div class="flex justify-between items-center mb-8">
-            <h2 class="text-3xl font-bold">Featured Products</h2>
+        <div class="flex justify-between items-center ">
+            <h2 class="text-3xl font-bold">New This Week</h2>
             <a href="{% url 'market' %}" class="text-green-700 hover:text-green-900 font-medium">View All →</a>
         </div>
+        <p class="text-gray-500 mt-1 mb-8">Explore the latest listings added by farmers across Ghana</p>
         <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {% for product in featured_products %}
             <div class="bg-white rounded-lg shadow-md overflow-hidden">
@@ -66,7 +178,7 @@
                     {% endif %}
                 </div>
                 <div class="p-4">
-                    <h3 class="text-xl font-semibold mb-2">{{ product.crop_name }}</h3>
+                    <h3 class="text-xl font-semibold mb-2">{{ product.crop.name }}</h3>
                     <div class="flex justify-between items-center mb-2">
                         <span class="text-gray-600">{{ product.quantity }} {{ product.unit }}</span>
                         <span class="font-bold text-green-700">₵{{ product.price_per_unit }}</span>
@@ -77,7 +189,7 @@
                         </svg>
                         <span class="text-sm">{{ product.region }}, {{ product.location }}</span>
                     </div>
-                    <a href="{% url 'product_detail' product.id %}" class="block w-full bg-green-600 hover:bg-green-700 text-white text-center py-2 px-4 rounded">View Details</a>
+                    <a href="{% url 'product_detail' product.slug product.uid %}" class="block w-full bg-green-600 hover:bg-green-700 text-white text-center py-2 px-4 rounded">View Details</a>
                 </div>
             </div>
             {% empty %}
@@ -89,64 +201,57 @@
         </div>
     </div>
 
-    <!-- Price Trends -->
-    <div class="mt-16">
-        <div class="flex justify-between items-center mb-8">
-            <h2 class="text-3xl font-bold">Current Market Prices</h2>
-            <a href="" class="text-green-700 hover:text-green-900 font-medium">Full Price Dashboard →</a>
+ <!-- Price Trends -->
+<div class="mt-16 px-4">
+  <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-2">
+    <h2 class="text-2xl sm:text-3xl font-bold text-gray-800">Current Market Prices</h2>
+    <a href="" class="text-green-700 hover:text-green-900 font-medium text-sm sm:text-base">
+      Full Price Dashboard →
+    </a>
+  </div>
+
+  <div class="bg-white rounded-lg shadow-md p-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {% for price in price_trends %}
+      <div class="bg-white rounded-lg shadow-sm p-4 border-t-4 
+                  {% if price.trend > 0 %}border-green-500
+                  {% elif price.trend < 0 %}border-red-500
+                  {% else %}border-gray-400{% endif %}">
+        <div class="flex justify-between items-center mb-2">
+          <h3 class="text-lg font-bold text-gray-800">{{ price.crop_name }}</h3>
+          <span class="text-sm text-gray-500">{{ price.region }}</span>
         </div>
-        <div class="bg-white rounded-lg shadow-md overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="min-w-full">
-                    <thead class="bg-green-700 text-white">
-                        <tr>
-                            <th class="py-3 px-4 text-left">Crop</th>
-                            <th class="py-3 px-4 text-left">Region</th>
-                            <th class="py-3 px-4 text-left">Average Price (₵)</th>
-                            <th class="py-3 px-4 text-left">Trend</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-200">
-                        {% for price in price_trends %}
-                        <tr class="hover:bg-gray-50">
-                            <td class="py-3 px-4">{{ price.crop_name }}</td>
-                            <td class="py-3 px-4">{{ price.region }}</td>
-                            <td class="py-3 px-4 font-medium">₵{{ price.average_price }}</td>
-                            <td class="py-3 px-4">
-                                {% if price.trend > 0 %}
-                                <span class="text-green-600 flex items-center">
-                                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                        <path fill-rule="evenodd" d="M12 7a1 1 0 01-1 1H9a1 1 0 01-1-1V6a1 1 0 011-1h2a1 1 0 011 1v1zm-6 2a1 1 0 011-1h2a1 1 0 011 1v1a1 1 0 01-1 1H7a1 1 0 01-1-1V9zm6 0a1 1 0 011-1h2a1 1 0 011 1v1a1 1 0 01-1 1h-2a1 1 0 01-1-1V9zm-6 2a1 1 0 011-1h2a1 1 0 011 1v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-1zm6 0a1 1 0 011-1h2a1 1 0 011 1v1a1 1 0 01-1 1h-2a1 1 0 01-1-1v-1z" clip-rule="evenodd"></path>
-                                    </svg>
-                                    +{{ price.trend }}%
-                                </span>
-                                {% elif price.trend < 0 %}
-                                <span class="text-red-600 flex items-center">
-                                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                        <path fill-rule="evenodd" d="M12 13a1 1 0 01-1 1H9a1 1 0 01-1-1v-1a1 1 0 011-1h2a1 1 0 011 1v1zm-6-2a1 1 0 011-1h2a1 1 0 011 1v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-1zm6 0a1 1 0 011-1h2a1 1 0 011 1v1a1 1 0 01-1 1h-2a1 1 0 01-1-1v-1zm-6-2a1 1 0 011-1h2a1 1 0 011 1v1a1 1 0 01-1 1H7a1 1 0 01-1-1V9zm6 0a1 1 0 011-1h2a1 1 0 011 1v1a1 1 0 01-1 1h-2a1 1 0 01-1-1V9z" clip-rule="evenodd"></path>
-                                    </svg>
-                                    {{ price.trend }}%
-                                </span>
-                                {% else %}
-                                <span class="text-gray-600 flex items-center">
-                                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                        <path fill-rule="evenodd" d="M5 10a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1z" clip-rule="evenodd"></path>
-                                    </svg>
-                                    Stable
-                                </span>
-                                {% endif %}
-                            </td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="4" class="py-8 text-center text-gray-500">No price data available yet</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+        <div class="text-2xl font-semibold text-green-700 mb-1">
+          ₵{{ price.average_price }}
         </div>
+        <div class="text-sm text-gray-600 flex items-center">
+          {% if price.trend > 0 %}
+          <svg class="w-4 h-4 text-green-500 mr-1" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M5 10l5-5 5 5H5z" clip-rule="evenodd" />
+          </svg>
+          <span class="text-green-600">+{{ price.trend }}%</span>
+          {% elif price.trend < 0 %}
+          <svg class="w-4 h-4 text-red-500 mr-1" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M5 10l5 5 5-5H5z" clip-rule="evenodd" />
+          </svg>
+          <span class="text-red-600">{{ price.trend }}%</span>
+          {% else %}
+          <svg class="w-4 h-4 text-gray-500 mr-1" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M5 10h10v2H5z" clip-rule="evenodd" />
+          </svg>
+          <span class="text-gray-600">Stable</span>
+          {% endif %}
+        </div>
+      </div>
+      {% empty %}
+      <div class="col-span-full text-center text-gray-500 py-8">
+        No market data available yet.
+      </div>
+      {% endfor %}
     </div>
+  </div>
+</div>
+
 
     <!-- Testimonials -->
     <div class="mt-16">

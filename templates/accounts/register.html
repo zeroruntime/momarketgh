@@ -9,7 +9,7 @@
         <p class="text-green-100">Create your account to get started</p>
     </div>
     <div class="p-6">
-        <form method="post" action="{% url 'register' %}">
+        <form method="post" action="{% url 'register' %}" enctype="multipart/form-data">
             {% csrf_token %}
             
             <div class="mb-6">
@@ -114,6 +114,12 @@
                 {% if form.password2.errors %}
                 <p class="text-red-500 text-xs mt-1">{{ form.password2.errors }}</p>
                 {% endif %}
+            </div>
+
+            <div class="mb-4">
+                <label for="id_profile_photo" class="block text-gray-700 text-sm font-bold mb-2">Profile Photo:</label>
+                <input type="file" name="profile_photo" id="id_profile_photo" accept="image/*"
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
             </div>
 
             <div class="flex items-center justify-between">

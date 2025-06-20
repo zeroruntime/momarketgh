@@ -1,113 +1,143 @@
 {% extends 'base.html' %}
-
 {% load static %}
 
-
 {% block content %}
-<div class="py-10">
-  <div class="container mx-auto px-4 sm:px-12 lg:px-8">
-    <!-- Header with improved semantics -->
-    <header class="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-8 gap-4">
-        <div class="flex items-center mb-8 lg:mb-0">
-          <div class="bg-gray-200 w-12 h-12 rounded-md mr-4" role="presentation" aria-hidden="true">
-            <img src="{% static 'icons/market.svg' %}" alt="Logo" class="w-full h-full object-contain">
+<div class="py-8">
+  <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Header Section -->
+    <header class="mb-10">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+        <div class="flex items-center">
+          <div class="bg-green-100 w-14 h-14 rounded-lg flex items-center justify-center mr-4">
+            <img src="{% static 'icons/market.svg' %}" alt="Marketplace" class="w-8 h-8">
           </div>
-          <h1 class="text-black text-2xl font-bold">Marketplace</h1>
+          <div>
+            <h1 class="text-3xl font-bold text-gray-800 whitespace-nowrap">Crop Marketplace</h1>
+            <p class="text-gray-600">Browse products by category</p>
+          </div>
         </div>
-      
+        
+        <!-- Search Bar -->
         <div x-data="{
-            query: '',
-            results: [],
-            searchUrl: '{% url 'ajax_crop_search' %}',
-            async search() {
-              if (this.query.length < 2) {
-                this.results = [];
-                return;
-              }
-              let res = await fetch(`${this.searchUrl}?q=${encodeURIComponent(this.query)}`);
-              let data = await res.json();
-              this.results = data.results;
+          query: '',
+          results: [],
+          searchUrl: '{% url 'ajax_crop_search' %}',
+          async search() {
+            if (this.query.length < 2) {
+              this.results = [];
+              return;
             }
-          }" class="relative w-full sm:w-auto">
+            let res = await fetch(`${this.searchUrl}?q=${encodeURIComponent(this.query)}`);
+            let data = await res.json();
+            this.results = data.results;
+          }
+        }" class="relative w-full md:w-96">
           <label for="crop-search" class="sr-only">Search crops</label>
-
-          <div class="flex items-center w-full sm:w-80">
-            <input x-model="query" @input.debounce.300ms="search" id="crop-search" type="search" name="q"
-              placeholder="Search crops..."
-              class="w-full sm:w-64 px-4 py-2 mr-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500 focus:outline-none"
-              autocomplete="off" />
-
-            <button type="submit" class="bg-gray-200 w-12 h-12 rounded-full shrink-0 flex items-center justify-center">
-              <i class="fa-solid fa-magnifying-glass text-gray-500"></i>
+          <div class="relative">
+            <input x-model="query" @input.debounce.300ms="search" id="crop-search" type="search" 
+                   class="w-full pl-4 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                   placeholder="Search crops..." autocomplete="off">
+            <button class="absolute right-3 ml-3 top-3 text-gray-500 hover:text-green-600">
+              <i class="fas fa-search"></i>
             </button>
           </div>
-
-          <!-- Dropdown results -->
+          
+          <!-- Search Results Dropdown -->
           <ul x-show="results.length" @click.away="results = []"
-            class="absolute mt-2 bg-white text-black rounded-md shadow w-full z-20">
+              class="absolute z-10 mt-1 w-full bg-white shadow-lg rounded-lg overflow-hidden border border-gray-200">
             <template x-for="item in results" :key="item.id">
-              <li class="px-4 py-2 hover:bg-green-100 cursor-pointer">
-                <a :href="`/products/crop/${item.slug}/`" x-text="item.name"></a>
+              <li class="border-b border-gray-100 last:border-b-0">
+                <a :href="`/products/crop/${item.slug}/`" 
+                   class="block px-4 py-3 hover:bg-green-50 text-gray-800 hover:text-green-700 transition">
+                  <span x-text="item.name"></span>
+                  <span class="text-sm text-gray-500 ml-2" x-text="`(${item.category_name})`"></span>
+                </a>
               </li>
             </template>
           </ul>
         </div>
+      </div>
 
-
-          
-      </header>
-    
-
-    <nav class="mb-6 border-b border-gray-200 overflow-x-auto" role="navigation" aria-label="Crop categories">
-        <ul class="flex flex-nowrap space-x-4 min-w-full px-1 sm:px-0">
+      <!-- Category Navigation -->
+      <nav class="mb-8" aria-label="Crop categories">
+        <div class="flex space-x-1 overflow-x-auto pb-2 scrollbar-hide">
           {% for category in categories %}
-            <li>
-              <a href="#category-{{ category.id }}"
-                 class="inline-block py-2 px-4 whitespace-nowrap border-b-2 text-gray-700 transition 
-                        {% if forloop.first %}border-green-600 text-green-600 font-medium{% else %}border-transparent hover:text-green-600 hover:border-green-600{% endif %} 
-                        focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                 {% if forloop.first %}aria-current="page"{% endif %}>
-                {{ category.name }}
-              </a>
-            </li>
-          {% endfor %}
-        </ul>
-      </nav>
-
-    {% for category in categories %}
-      <section id="category-{{ category.id }}" class="mb-10">
-        <h2 class="text-black text-3xl font-bold mb-6 pt-2">{{ category.name }}</h2>
-        
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {% for crop in category.crops.all %}
-            <article class="border border-gray-300 rounded-md p-4 hover:shadow-md focus-within:ring-2 focus-within:ring-green-500 transition">
-              <a href="{% url 'crop_listings' crop.slug %}" class="group block focus:outline-none" 
-                 aria-label="{{ crop.name }} - {{ crop.active_listings_count }} listing{{ crop.active_listings_count|pluralize }}">
-                <div class="flex items-center">
-                  <!-- Crop icon with alt text -->
-                  <div class="w-16 h-16 rounded-md mr-4 overflow-hidden" aria-hidden="true">
-                    <img src="{% static 'icons/crops/' %}{{ crop.slug }}.svg" 
-                    alt="{{ crop.name }}" 
-                    class="w-full h-full object-contain" 
-                    onerror="this.onerror=null;this.src='{% static 'icons/crops/default.svg' %}';">
-                  </div>
-                  <div>
-                    <h3 class="text-black text-xl font-medium group-hover:text-green-600 transition">{{ crop.name }}</h3>
-                    <p class="text-gray-600 text-sm mt-1">
-                      <span class="font-medium">{{ crop.active_listings_count }}</span> listing{{ crop.active_listings_count|pluralize }} available
-                    </p>
-                  </div>
-                </div>
-              </a>
-            </article>
-          {% empty %}
-            <div class="col-span-full text-gray-500 py-6 text-center border border-gray-200 rounded-md bg-gray-50">
-              No crops available in this category yet
-            </div>
+            <a href="#category-{{ category.id }}"
+               class="flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition
+                      {% if forloop.first %}bg-green-600 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}"
+               {% if forloop.first %}aria-current="page"{% endif %}>
+              {{ category.name }}
+            </a>
           {% endfor %}
         </div>
-      </section>
-    {% endfor %}
+      </nav>
+    </header>
+
+    <!-- Category Sections -->
+    <div class="space-y-12">
+      {% for category in categories %}
+        <section id="category-{{ category.id }}" class="scroll-mt-20 mb-6">
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl font-bold text-gray-800 flex items-center">
+              <span class="w-3 h-3 bg-green-600 rounded-full mr-3"></span>
+              {{ category.name }}
+            </h2>
+            <span class="text-sm text-gray-500">
+              {{ category.crops.count }} crop{{ category.crops.count|pluralize }}
+            </span>
+          </div>
+          
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {% for crop in category.crops.all %}
+              <article class="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-md transition-shadow">
+                <a href="{% url 'crop_listings' crop.slug %}" class="block p-4 group">
+                  <div class="flex items-start">
+                    <div class="flex-shrink-0 bg-green-50 w-16 h-16 rounded-lg flex items-center justify-center mr-4">
+                      <img src="{% static 'icons/crops/' %}{{ crop.slug }}.svg" 
+                           alt="{{ crop.name }} icon"
+                           class="w-10 h-10 object-contain"
+                           onerror="this.onerror=null;this.src='{% static 'icons/crops/default.svg' %}';">
+                    </div>
+                    <div>
+                      <h3 class="text-lg font-semibold text-gray-800 group-hover:text-green-600 transition">
+                        {{ crop.name }}
+                      </h3>
+                      <div class="mt-1 flex items-center text-sm text-gray-600">
+                        <span class="inline-flex items-center px-2 py-0.5 rounded bg-green-100 text-green-800">
+                          <i class="fas fa-box-open mr-1 text-xs"></i>
+                          <span>{{ crop.active_listings_count }} active</span>
+                        </span>
+                        {% if crop.average_price %}
+                        <span class="ml-2 inline-flex items-center px-2 py-0.5 rounded bg-blue-100 text-blue-800">
+                          <i class="fas fa-money-bill-wave mr-1 text-xs"></i>
+                          <span>GH₵{{ crop.average_price|floatformat:2 }}</span>
+                        </span>
+                        {% endif %}
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              </article>
+            {% empty %}
+              <div class="col-span-full py-8 text-center bg-gray-50 rounded-xl border border-dashed border-gray-300">
+                <i class="fas fa-seedling text-3xl text-gray-400 mb-3"></i>
+                <p class="text-gray-500">No crops available in this category</p>
+              </div>
+            {% endfor %}
+          </div>
+        </section>
+      {% endfor %}
+    </div>
   </div>
 </div>
+
+<style>
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+</style>
 {% endblock %}

@@ -1,0 +1,342 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Chat with {{ other_user.get_full_name|default:other_user.username }}{% endblock %}
+
+{% block content %}
+<div x-data="chatApp()" x-init="init()" class="max-w-4xl mx-auto">
+    
+    <!-- Chat Container -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 flex flex-col" style="height: calc(100vh - 200px); min-height: 500px;">
+        
+        <!-- Chat Header -->
+        <div class="bg-green-600 text-white px-4 sm:px-6 py-4 rounded-t-lg">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <a href="{% url 'inbox' %}" class="text-white hover:text-green-200 transition-colors mr-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                        </svg>
+                    </a>
+                    
+                    <!-- User Avatar -->
+                    <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold
+                        {% if other_user.role == 'Farmer' %}bg-green-500
+                        {% elif other_user.role == 'Trader' %}bg-blue-500
+                        {% else %}bg-orange-500{% endif %}">
+                        {% if other_user.role == 'Farmer' %}👨‍🌾
+                        {% elif other_user.role == 'Trader' %}🧑‍💼
+                        {% else %}🚚{% endif %}
+                    </div>
+                    
+                    <div>
+                        <h2 class="font-semibold text-lg">{{ other_user.get_full_name|default:other_user.username }}</h2>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xs bg-white bg-opacity-20 px-2 py-1 rounded-full text-black">
+                                {{ other_user.role }}
+                            </span>
+                            <div class="flex items-center space-x-1">
+                                <div class="w-2 h-2 bg-green-400 rounded-full"></div>
+                                <span class="text-xs opacity-75">Online</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Options Menu -->
+                <div class="relative" x-data="{ open: false }">
+                    <button @click="open = !open" class="text-white hover:text-green-200 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path>
+                        </svg>
+                    </button>
+                    <div x-show="open" @click.away="open = false" x-transition
+                         class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
+                        <div class="py-1">
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">View Profile</a>
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Clear Chat</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading indicator -->
+        <div x-show="loading" class="p-4 text-center text-gray-500">
+            <div class="inline-flex items-center">
+                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Loading messages...
+            </div>
+        </div>
+
+        <!-- Error message -->
+        <div x-show="error" class="p-4 bg-red-50 border-l-4 border-red-400">
+            <div class="flex">
+                <svg class="h-5 w-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <p class="ml-3 text-sm text-red-700" x-text="error"></p>
+            </div>
+        </div>
+
+        <!-- Messages Container -->
+        <div id="message-list" class="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
+            <template x-for="message in messages" :key="message.id">
+                <div :class="message.sender === currentUser ? 'flex justify-end' : 'flex justify-start'">
+                    <div class="max-w-xs lg:max-w-md">
+                        <!-- Message Bubble -->
+                        <div :class="message.sender === currentUser 
+                            ? 'bg-green-500 text-white rounded-l-lg rounded-tr-lg' 
+                            : 'bg-white text-gray-800 rounded-r-lg rounded-tl-lg shadow-sm border border-gray-200'"
+                             class="px-4 py-3 break-words">
+                            <p x-text="message.text" class="text-sm leading-relaxed"></p>
+                        </div>
+                        
+                        <!-- Timestamp -->
+                        <div :class="message.sender === currentUser ? 'text-right' : 'text-left'" 
+                             class="mt-1 px-2">
+                            <span class="text-xs text-gray-500" x-text="formatTime(message.timestamp)"></span>
+                        </div>
+                    </div>
+                </div>
+            </template>
+            
+            <!-- Empty state -->
+            <div x-show="messages.length === 0 && !loading" class="text-center py-12">
+                <div class="w-16 h-16 mx-auto mb-4 text-gray-400">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" 
+                              d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z">
+                        </path>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">Start the conversation!</h3>
+                <p class="text-sm text-gray-500">Send a message to {{ other_user.get_full_name|default:other_user.username }}</p>
+            </div>
+        </div>
+
+        <!-- Message Input -->
+        <div class="border-t border-gray-200 bg-white rounded-b-lg">
+            <form @submit.prevent="sendMessage" class="p-4">
+                <div class="flex items-end space-x-3">
+                    <!-- Message Input -->
+                    <div class="flex-1">
+                        <div class="relative">
+                            <textarea x-model="newMessage" 
+                                      @keydown.enter.prevent="handleEnterKey"
+                                      placeholder="Type your message..." 
+                                      rows="1"
+                                      class="w-full resize-none border border-gray-300 rounded-lg px-4 py-3 pr-12 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                      :disabled="sending"
+                                      maxlength="1000"
+                                      style="min-height: 44px; max-height: 120px;"
+                                      required></textarea>
+                            
+                            <!-- Character count -->
+                            <div class="absolute bottom-2 right-2 text-xs text-gray-400">
+                                <span x-text="newMessage.length"></span>/1000
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Send Button -->
+                    <button type="submit" 
+                            class="bg-green-600 text-white p-3 rounded-lg hover:bg-green-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                            :disabled="sending || !newMessage.trim()"
+                            style="min-width: 48px; height: 44px;">
+                        <svg x-show="!sending" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                        </svg>
+                        <svg x-show="sending" class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function chatApp() {
+    return {
+        messages: [],
+        newMessage: '',
+        currentUser: {{ request.user.id }},
+        conversationUuid: "{{ conversation.uuid }}",
+        polling: null,
+        loading: false,
+        sending: false,
+        error: '',
+
+        init() {
+            this.fetchMessages();
+            this.startPolling();
+            
+            window.addEventListener('beforeunload', () => {
+                this.stopPolling();
+            });
+
+            // Auto-resize textarea
+            this.$nextTick(() => {
+                const textarea = document.querySelector('textarea');
+                if (textarea) {
+                    textarea.addEventListener('input', this.autoResize);
+                }
+            });
+        },
+
+        startPolling() {
+            this.polling = setInterval(() => {
+                this.fetchMessages(false);
+            }, 3000);
+        },
+
+        stopPolling() {
+            if (this.polling) {
+                clearInterval(this.polling);
+                this.polling = null;
+            }
+        },
+
+        async fetchMessages(showLoading = true) {
+            if (showLoading) this.loading = true;
+            this.error = '';
+            
+            try {
+                const response = await fetch(`/chat/api/messages/${this.conversationUuid}/`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                
+                const previousLength = this.messages.length;
+                this.messages = data.messages;
+                
+                // Only scroll if new messages or initial load
+                if (this.messages.length !== previousLength || showLoading) {
+                    this.scrollToBottom();
+                }
+                
+            } catch (error) {
+                console.error('Fetch messages error:', error);
+                this.error = 'Failed to load messages. Please refresh the page.';
+            } finally {
+                this.loading = false;
+            }
+        },
+
+        async sendMessage() {
+            if (!this.newMessage.trim() || this.sending) return;
+            
+            this.sending = true;
+            this.error = '';
+            const messageText = this.newMessage.trim();
+            
+            try {
+                const response = await fetch("{% url 'send_message' %}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({
+                        conversation_uuid: this.conversationUuid,
+                        text: messageText
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                this.newMessage = '';
+                this.autoResize(); // Reset textarea height
+                await this.fetchMessages(false);
+                
+            } catch (error) {
+                console.error('Send message error:', error);
+                this.error = 'Failed to send message. Please try again.';
+            } finally {
+                this.sending = false;
+            }
+        },
+
+        handleEnterKey(event) {
+            if (!event.shiftKey) {
+                this.sendMessage();
+            }
+        },
+
+        autoResize() {
+            const textarea = event.target;
+            textarea.style.height = 'auto';
+            textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+        },
+
+        formatTime(timestamp) {
+            try {
+                const date = new Date(timestamp);
+                const now = new Date();
+                const diff = now - date;
+                
+                // Less than 1 minute
+                if (diff < 60000) {
+                    return 'Just now';
+                }
+                // Less than 1 hour
+                else if (diff < 3600000) {
+                    const minutes = Math.floor(diff / 60000);
+                    return `${minutes}m ago`;
+                }
+                // Same day
+                else if (date.toDateString() === now.toDateString()) {
+                    return date.toLocaleTimeString([], { 
+                        hour: '2-digit', 
+                        minute: '2-digit' 
+                    });
+                }
+                // Different day
+                else {
+                    return date.toLocaleDateString([], {
+                        month: 'short',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                }
+            } catch {
+                return '';
+            }
+        },
+
+        scrollToBottom() {
+            this.$nextTick(() => {
+                const list = document.getElementById('message-list');
+                if (list) {
+                    list.scrollTop = list.scrollHeight;
+                }
+            });
+        }
+    };
+}
+</script>
+{% endblock %}

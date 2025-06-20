@@ -3,57 +3,229 @@
 {% block title %}My Profile - MoMarket GH{% endblock %}
 
 {% block content %}
-<div class="max-w-5xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden mt-8">
-    <div class="bg-green-700 text-white py-6 px-8">
-        <h2 class="text-3xl font-bold">👤 My Profile</h2>
-        <p class="text-green-100 text-sm mt-1">Welcome back, {{ user.full_name }}</p>
-    </div>
-
-    <div class="p-8">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
-            <div>
-                <h3 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">Personal Information</h3>
-                <ul class="text-gray-700 space-y-2">
-                    <li><span class="font-medium">Name:</span> {{ user.full_name }}</li>
-                    <li><span class="font-medium">Username:</span> {{ user.username }}</li>
-                    <li><span class="font-medium">Phone:</span> {{ user.phone_number }}</li>
-                    <li><span class="font-medium">Role:</span> {{ user.role }}</li>
-                </ul>
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Profile Header -->
+    <div class="bg-green-600 rounded-2xl shadow-xl overflow-hidden mb-8">
+<div class="px-6 py-8 sm:p-10 flex flex-col sm:flex-row sm:items-center">
+    <!-- Avatar Section -->
+    <div class="relative mb-6 sm:mb-0 sm:mr-8 flex-shrink-0 flex justify-center items-center">
+        {% if user.profile_photo %}
+            <img src="{{ user.profile_photo.url }}" alt="Profile Photo" 
+                 class="w-32 h-32 sm:w-40 sm:h-40 rounded-full border-4 border-white shadow-lg object-cover">
+        {% else %}
+            <div class="w-32 h-32 sm:w-40 sm:h-40 rounded-full bg-white/20 flex items-center justify-center text-white text-5xl shadow-inner border-4 border-white">
+                <i class="fas fa-user"></i>
             </div>
-
-            <div>
-                <h3 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">Location</h3>
-                <ul class="text-gray-700 space-y-2">
-                    <li><span class="font-medium">Region:</span> {{ user.region }}</li>
-                    <li><span class="font-medium">Town/City:</span> {{ user.location }}</li>
-                </ul>
-            </div>
-        </div>
-
-        {% if is_transporter %}
-        <div class="mb-10">
-            <h3 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">🚚 Transport Details</h3>
-            <ul class="text-gray-700 space-y-2">
-                <li><span class="font-medium">Vehicle Type:</span> {{ transporter_profile.vehicle_type }}</li>
-                <li><span class="font-medium">Route Regions:</span> {{ transporter_profile.route_regions }}</li>
-                <li><span class="font-medium">Pricing Note:</span> {{ transporter_profile.pricing_note }}</li>
-                <li><span class="font-medium">Contact:</span> {{ transporter_profile.contact_number }}</li>
-                <li>
-                    <span class="font-medium">Availability:</span>
-                    <span class="{% if transporter_profile.is_available %}text-green-600{% else %}text-red-600{% endif %}">
-                        {% if transporter_profile.is_available %}Available{% else %}Not Available{% endif %}
-                    </span>
-                </li>
-            </ul>
-        </div>
         {% endif %}
+        <!-- Role Badge -->
+        <span class="absolute -bottom-2 -right-2 bg-white rounded-full p-2 shadow-md">
+            {% if user.role == 'Farmer' %}
+                <span class="farmer-color text-2xl">👨‍🌾</span>
+            {% elif user.role == 'Trader' %}
+                <span class="trader-color text-2xl">🧑‍💼</span>
+            {% elif user.role == 'Transporter' %}
+                <span class="transporter-color text-2xl">🚚</span>
+            {% endif %}
+        </span>
+    </div>
 
-        <div class="text-right">
-            <a href="{% url 'profile_update' %}"
-               class="inline-block bg-green-700 hover:bg-green-800 text-white font-semibold py-2 px-5 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg">
-                ✏️ Edit Profile
+    <!-- Text Content Section -->
+    <div class="text-center sm:text-left w-full">
+        <h1 class="text-3xl sm:text-4xl font-bold text-white">{{ user.full_name }}</h1>
+
+        <div class="mt-2 inline-block bg-white/20 text-white px-4 py-1 rounded-full text-sm font-medium">
+            {{ user.role }}
+        </div>
+
+        <p class="mt-3 text-green-100 max-w-lg mx-auto sm:mx-0">
+            <i class="fas fa-map-marker-alt mr-1"></i> {{ user.location }}, {{ user.region }}
+        </p>
+
+        <div class="mt-4 flex flex-wrap justify-center sm:justify-start gap-3">
+            <a href="{% url 'profile_update' %}" 
+               class="inline-flex items-center px-4 py-2 bg-white text-green-700 font-medium rounded-lg hover:bg-gray-100 transition-all">
+                <i class="fas fa-edit mr-2"></i> Edit Profile
             </a>
+            {% if is_transporter %}
+            <a href="#" 
+               class="inline-flex items-center px-4 py-2 bg-white/10 text-white font-medium rounded-lg hover:bg-white/20 transition-all">
+                <i class="fas fa-truck mr-2"></i> Transport Settings
+            </a>
+            {% endif %}
         </div>
     </div>
+</div>
+
+    </div>
+
+    <!-- Profile Sections -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <!-- Personal Information Card -->
+        <div class="bg-white rounded-2xl shadow-md overflow-hidden">
+            <div class="bg-gray-50 px-6 py-4 border-b">
+                <h2 class="text-xl font-semibold text-gray-800 flex items-center">
+                    <i class="fas fa-user-circle mr-2 text-green-600"></i> Personal Information
+                </h2>
+            </div>
+            <div class="p-6">
+                <div class="space-y-4">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 h-10 w-10 rounded-full bg-green-50 flex items-center justify-center text-green-600">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-500">Full Name</p>
+                            <p class="text-sm text-gray-900">{{ user.full_name }}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 h-10 w-10 rounded-full bg-green-50 flex items-center justify-center text-green-600">
+                            <i class="fas fa-at"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-500">Username</p>
+                            <p class="text-sm text-gray-900">@{{ user.username }}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 h-10 w-10 rounded-full bg-green-50 flex items-center justify-center text-green-600">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-500">Phone Number</p>
+                            <p class="text-sm text-gray-900">{{ user.phone_number }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Location Card -->
+        <div class="bg-white rounded-2xl shadow-md overflow-hidden">
+            <div class="bg-gray-50 px-6 py-4 border-b">
+                <h2 class="text-xl font-semibold text-gray-800 flex items-center">
+                    <i class="fas fa-map-marked-alt mr-2 text-green-600"></i> Location
+                </h2>
+            </div>
+            <div class="p-6">
+                <div class="space-y-4">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 h-10 w-10 rounded-full bg-green-50 flex items-center justify-center text-green-600">
+                            <i class="fas fa-globe-africa"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-500">Region</p>
+                            <p class="text-sm text-gray-900">{{ user.region }}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 h-10 w-10 rounded-full bg-green-50 flex items-center justify-center text-green-600">
+                            <i class="fas fa-city"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-500">Town/City</p>
+                            <p class="text-sm text-gray-900">{{ user.location }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-6 bg-gray-50 rounded-lg p-4">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0 h-10 w-10 rounded-full bg-green-100 flex items-center justify-center text-green-600">
+                            <i class="fas fa-info-circle"></i>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm text-gray-600">Your location helps us connect you with nearby buyers and sellers.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if is_transporter %}
+    <!-- Transport Profile Card -->
+    <div class="bg-white rounded-2xl shadow-md overflow-hidden mb-8">
+        <div class="bg-gray-50 px-6 py-4 border-b">
+            <h2 class="text-xl font-semibold text-gray-800 flex items-center">
+                <i class="fas fa-truck mr-2 text-orange-500"></i> Transport Details
+            </h2>
+        </div>
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-4">
+                    <div>
+                        <p class="text-sm font-medium text-gray-500">Vehicle Type</p>
+                        <p class="text-sm text-gray-900">{{ transporter_profile.vehicle_type }}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-500">Route Regions</p>
+                        <p class="text-sm text-gray-900">{{ transporter_profile.route_regions }}</p>
+                    </div>
+                </div>
+                <div class="space-y-4">
+                    <div>
+                        <p class="text-sm font-medium text-gray-500">Pricing Note</p>
+                        <p class="text-sm text-gray-900">{{ transporter_profile.pricing_note }}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-500">Availability</p>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                            {% if transporter_profile.is_available %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %}">
+                            {% if transporter_profile.is_available %}
+                                <i class="fas fa-check-circle mr-1"></i> Available
+                            {% else %}
+                                <i class="fas fa-times-circle mr-1"></i> Not Available
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-6 flex justify-end">
+                <a href="#" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
+                    <i class="fas fa-edit mr-2"></i> Edit Transport Profile
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Stats Section -->
+    {% comment %} <div class="bg-white rounded-2xl shadow-md overflow-hidden">
+        <div class="bg-gray-50 px-6 py-4 border-b">
+            <h2 class="text-xl font-semibold text-gray-800 flex items-center">
+                <i class="fas fa-chart-line mr-2 text-green-600"></i> Activity Summary
+            </h2>
+        </div>
+        <div class="p-6">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="bg-green-50 rounded-lg p-4 text-center">
+                    <p class="text-sm font-medium text-green-600">Listings</p>
+                    <p class="text-2xl font-bold text-green-800">12</p>
+                    <p class="text-xs text-green-500">Active products</p>
+                </div>
+                <div class="bg-blue-50 rounded-lg p-4 text-center">
+                    <p class="text-sm font-medium text-blue-600">Transactions</p>
+                    <p class="text-2xl font-bold text-blue-800">24</p>
+                    <p class="text-xs text-blue-500">Completed orders</p>
+                </div>
+                <div class="bg-orange-50 rounded-lg p-4 text-center">
+                    <p class="text-sm font-medium text-orange-600">Rating</p>
+                    <div class="flex items-center justify-center">
+                        <p class="text-2xl font-bold text-orange-800 mr-2">4.8</p>
+                        <div class="flex">
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= 4 %}
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                {% else %}
+                                    <i class="fas fa-star-half-alt text-yellow-400"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <p class="text-xs text-orange-500">Based on 18 reviews</p>
+                </div>
+            </div>
+        </div>
+    </div> {% endcomment %}
 </div>
 {% endblock %}
