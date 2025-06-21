@@ -18,7 +18,7 @@
       
       {% if user.is_authenticated and user.role == 'Farmer' %}
       <a href="{% url 'create_listing' %}" 
-         class="inline-flex z-64 items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition">
+         class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition">
         <i class="fas fa-plus mr-2"></i> Add Your Listing
       </a>
       {% endif %}
@@ -55,7 +55,7 @@
         <!-- Filter Button -->
         <div class="flex items-end">
           <button type="submit" 
-                  class="w-full bg-green-600 hover:bg-green-700 z-64  text-white py-2 px-4 rounded-lg transition flex items-center justify-center">
+                  class="w-full bg-green-600 hover:bg-green-700  text-white py-2 px-4 rounded-lg transition flex items-center justify-center">
             <i class="fas fa-filter mr-2"></i> Apply Filters
           </button>
         </div>
