@@ -24,6 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-o5wv64b=v#b2+t+ngjwfv(t-=la!^az3r)%+tiua2a99v_0pnb'
+GEMINI_API_KEY = 'AIzaSyC4xHigQ2QBTf-96svQSwFbc2Ny-_t3Oug'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -49,7 +50,8 @@ INSTALLED_APPS = [
     'analytics',
     'transport',
     'admin_dashboard',
-    'chat'
+    'chat',
+    'chatbot'
 ]
 
 MIDDLEWARE = [
@@ -87,15 +89,15 @@ WSGI_APPLICATION = 'momarket.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
 # DATABASES = {
-#     'default': dj_database_url.config(default='postgresql://momarket_user:cEFvaqP23K2LawGz8fIe3CJtqdOupYt1@dpg-d023b6be5dus73bcuqhg-a/momarket')
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
 # }
+DATABASES = {
+    'default': dj_database_url.config(default='postgresql://momarket_r88j_user:njojcYYj9jup2i25JQ0gGLTtHmyYgxWr@dpg-d1b0scgdl3ps73e5tbug-a.ohio-postgres.render.com/momarket_r88j')
+}
 
 
 # Password validation
@@ -143,6 +145,8 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+SECURE_CROSS_ORIGIN_OPENER_POLICY = None  # For AJAX requests
+SECURE_REFERRER_POLICY = "same-origin"
 
 
 # Default primary key field type

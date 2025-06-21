@@ -60,12 +60,160 @@
         .floating-action-btn:hover {
             transform: translateY(-50%) scale(1.1);
         }
+
+                .nav-link {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background-color: currentColor;
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        .dropdown:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        .dropdown-menu {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .mobile-menu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        .mobile-menu.open {
+            max-height: 1000px;
+            transition: max-height 0.5s ease-in;
+        }
+        .badge {
+            font-size: 0.65rem;
+            top: -0.5rem;
+            right: -0.5rem;
+        }
+        .avatar-ring {
+            box-shadow: 0 0 0 2px white, 0 0 0 4px #7bf1a8;
+        }
+         /* Fixed Chatbot Widget Styles */
+        #kwasi-chatbot-frame {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border: none;
+            border-radius: 50%;
+            z-index: 9999;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            background: linear-gradient(135deg, #059669, #047857);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        #kwasi-chatbot-frame.expanded {
+            width: 400px;
+            height: 600px;
+            border-radius: 12px;
+            bottom: 20px;
+            right: 20px;
+            cursor: default;
+        }
+        
+        /* Mobile responsive chatbot */
+        @media (max-width: 768px) {
+            #kwasi-chatbot-frame {
+                bottom: 80px; /* Above bottom nav */
+            }
+            
+            #kwasi-chatbot-frame.expanded {
+                width: calc(100vw - 20px);
+                height: calc(100vh - 120px);
+                bottom: 90px;
+                right: 10px;
+                left: 10px;
+                max-width: none;
+            }
+        }
+        
+        /* Chat icon for collapsed state */
+        .chat-icon {
+            color: white;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            transition: transform 0.3s ease;
+        }
+        
+        #kwasi-chatbot-frame:not(.expanded):hover .chat-icon {
+            transform: scale(1.1);
+        }
+        
+        #kwasi-chatbot-frame.expanded .chat-icon {
+            display: none;
+        }
+        
+        /* Chatbot iframe styles */
+#kwasi-chatbot-frame iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: inherit;
+    display: none;
+}
+
+#kwasi-chatbot-frame.expanded iframe {
+    display: block;
+}
+        
+        /* Overlay for mobile when expanded */
+        .chatbot-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 9998;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .chatbot-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        @media (min-width: 769px) {
+            .chatbot-overlay {
+                display: none;
+            }
+        }
+
+    
     </style>
     {% block extra_css %}{% endblock %}
 </head>
 <body class="bg-gray-50 flex flex-col min-h-screen">
     <!-- Navbar -->
- <nav class="bg-green-700 px-4 py-3 sticky top-0 z-50 shadow-lg">
+ {% comment %} <nav class="bg-green-700 px-4 py-3 sticky top-0 z-50 shadow-lg">
   <div class="max-w-screen-xl mx-auto flex flex-wrap items-center justify-between">
     
     <!-- Logo -->
@@ -88,7 +236,7 @@
         <div class="flex flex-col lg:flex-row lg:items-center lg:space-x-6">
           <a href="{% url 'home' %}" class="block px-3 py-2 hover:bg-green-600 rounded lg:hover:bg-transparent lg:py-1">Home</a>
           <a href="{% url 'market' %}" class="block px-3 py-2 hover:bg-green-600 rounded lg:hover:bg-transparent lg:py-1">Market</a>
-          <a href="#" class="block px-3 py-2 hover:bg-green-600 rounded lg:hover:bg-transparent lg:py-1">Price Dashboard</a>
+          <a href="#" class="block px-3 py-2 hover:bg-green-600 rounded lg:hover:bg-transparent lg:py-1">Forum</a>
 
           {% if user.is_authenticated and user.role == 'Farmer' %}
             <a href="{% url 'create_listing' %}" class="block px-3 py-2 hover:bg-green-600 rounded lg:hover:bg-transparent lg:py-1">Add Product</a>
@@ -129,10 +277,239 @@
       </div>
     </div>
   </div>
-</nav>
+</nav> {% endcomment %}
 
       
-      
+      <nav class="bg-green-700 shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <!-- Left Section - Logo/Brand -->
+                <div class="flex items-center">
+                    <a href="{% url 'home' %}" class="text-xl font-bold text-white">
+                    MoMarket<span class="text-yellow-300">GH</span>
+                    </a>
+                </div>
+
+                <!-- Center Section - Main Navigation (Desktop) -->
+                <div class="hidden md:flex items-center space-x-1">
+                    <div class="dropdown relative">
+                        <a href="{% url 'home' %}" class="nav-link text-white hover:text-gray-500 px-4 py-2 flex items-center rounded-lg hover:bg-blue-50 transition-colors duration-200">
+                            <i class="fas fa-home mr-2"></i>
+                            Home
+                        </a>
+                    </div>                 
+
+                    <a href="{% url 'market' %}" class="nav-link text-white hover:text-gray-500 px-4 py-2 flex items-center rounded-lg hover:bg-blue-50 transition-colors duration-200">
+                        <i class="fa-solid fa-store mr-2"></i>
+                        Market
+                    </a>
+
+                    <a href="#" class="nav-link text-white hover:text-gray-500 px-4 py-2 flex items-center rounded-lg hover:bg-blue-50 transition-colors duration-200">
+                        <i class="fa-solid fa-comments mr-2"></i>
+                        Forum
+                    </a>
+
+
+                    <a href="#" class="nav-link text-white hover:text-green-600 px-4 py-2 flex items-center rounded-lg hover:bg-blue-50 transition-colors duration-200">
+                        <i class="fas fa-envelope mr-2"></i>
+                        Contact
+                    </a>
+                </div>
+
+                {% if user.is_authenticated %}
+
+                <!-- Right Section - Actions -->
+                <div class="flex items-center space-x-3">
+                    <a href="{% url "inbox" %}" class="p-2 rounded-full text-white hover:text-black hover:bg-gray-100 transition-colors duration-200 relative">
+                    <i class="fa-solid fa-message transition-colors duration-200"></i>
+                    <span class="sr-only">Inbox</span>
+                    </a>
+
+                    {% comment %} <button class="p-2 text-white hover:text-gray-500 rounded-full hover:bg-gray-100 transition-colors duration-200 relative">
+                        <i class="fas fa-bell"></i>
+                        <span class="sr-only">Notifications</span>
+                        <span class="absolute top-0 right-0 h-2.5 w-2.5 rounded-full bg-red-500 border-2 border-white"></span>
+                    </button> {% endcomment %}
+
+                    <div class="block h-6 w-px bg-gray-200"></div>
+
+                    <div class="dropdown relative">
+                        <button class="flex items-center space-x-2 focus:outline-none group">
+                            <div class="relative">
+                                {% if user.profile_photo and user.profile_photo.name %}
+                                    <div class="h-9 w-9 rounded-full bg-blue-100 flex items-center justify-center text-gray-500 overflow-hidden avatar-ring">
+                                        <img src="{{ user.profile_photo.url }}" alt="User" class="h-full w-full object-cover">
+                                    </div>
+                                {% else %}
+                                    <div class="h-9 w-9 rounded-full bg-blue-100 flex items-center justify-center text-gray-500 overflow-hidden avatar-ring">
+                                        <img src="{% static 'images/default.png' %}" alt="User" class="h-full w-full object-cover">
+                                    </div>
+                                {% endif %}
+
+                                <span class="absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full bg-green-500 border-2 border-white"></span>
+                            </div>
+                            <div class="hidden lg:flex flex-col items-start">
+                                <span class="text-sm font-medium text-white transition-colors duration-200">{{ user.full_name }}</span>
+                                <span class="text-xs text-gray-200">{{ user.role }}</span>
+                            </div>
+                            {% comment %} <i class="fas fa-chevron-down text-xs text-gray-500 hidden lg:inline transition-transform duration-200 group-hover:text-gray-500"></i> {% endcomment %}
+                        </button>
+                        <div class="dropdown-menu absolute right-0 mt-2 w-64 bg-green-700 rounded-lg shadow-xl py-1 z-50 opacity-0 invisible transition-all duration-300 transform -translate-y-2 border border-gray-100">
+                            <div class="px-4 py-3 border-b border-gray-100">
+                                <div class="flex items-center">
+                                    {% if user.profile_photo and user.profile_photo.name %}
+                                        <div class="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-gray-500 overflow-hidden mr-3">
+                                            <img src="{{ user.profile_photo.url }}" alt="User" class="h-full w-full object-cover">
+                                        </div>
+                                    {% else %}
+                                        <div class="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-gray-500 overflow-hidden mr-3">
+                                            <img src="{% static 'images/default.png' %}" alt="User" class="h-32 w-32 object-cover">
+                                        </div>
+                                    {% endif %}
+
+                                    <div>
+                                        <p class="font-medium text-white">{{ user.full_name }}</p>
+                                        <p class="text-sm text-gray-300">{{ user.role }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="{% url "profile" %}" class="block px-4 py-2.5 text-gray-300 hover:bg-blue-50 hover:text-gray-500 flex items-center transition-colors duration-200">
+                                <i class="fas fa-user-circle text-white hover:text-gray-500 mr-3 w-5 text-center"></i>
+                                My Profile
+                            </a>
+
+                            {% if user.role == 'Farmer' %}
+                                <a href="#" class="block px-4 py-2.5 text-gray-300 hover:bg-blue-50 hover:text-gray-500 flex items-center transition-colors duration-200">
+                                    <i class="fas fa-cog text-white hover:text-gray-500 mr-3 w-5 text-center"></i>
+                                    Dashboard
+                                </a>
+                            {% elif user.role == 'Trader' %}
+                                <a href="#" class="block px-4 py-2.5 text-gray-300 hover:bg-blue-50 hover:text-gray-500 flex items-center transition-colors duration-200">
+                                    <i class="fas fa-cog text-white hover:text-gray-500 mr-3 w-5 text-center"></i>
+                                    Trader Dashboard (Coming Soon)
+                                </a>
+                            {% elif user.role == 'Transporter' %}
+                                <a href="#" class="block px-4 py-2.5 text-gray-300 hover:bg-blue-50 hover:text-gray-500 flex items-center transition-colors duration-200">
+                                    <i class="fas fa-cog text-white hover:text-gray-500 mr-3 w-5 text-center"></i>
+                                    Transporter Dashboard (Coming Soon)
+                                </a>
+                            {% endif %}
+
+                        
+                            <a href="{% url "inbox" %}" class="block px-4 py-2.5 text-gray-300 hover:bg-blue-50 hover:text-gray-500 flex items-center transition-colors duration-200">
+                                <i class="fas fa-envelope text-white hover:text-gray-500 mr-3 w-5 text-center"></i>
+                                Messages
+                            </a>
+                            <div class="border-t border-gray-100 my-1"></div>
+                            {% comment %} <a href="#" class="block px-4 py-2.5 text-white hover:bg-blue-50 hover:text-gray-500 flex items-center transition-colors duration-200">
+                                <i class="fas fa-sign-out-alt text-white hover:text-gray-500 mr-3 w-5 text-center"></i>
+                                Sign out
+                            </a> {% endcomment %}
+
+                            <form method="post" action="{% url 'logout' %}" class="px-4 py-2.5 flex items-center  hover:bg-blue-50 hover:text-gray-500">
+                            {% csrf_token %}
+                                <i class="fas fa-sign-out-alt text-white hover:text-gray-500 mr-3 w-5 text-center"></i>
+
+                                <button type="submit" class=" rounded-md text-gray-300">
+                                    Logout
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="hidden md:flex items-center space-x-1">
+
+                    <a href="{% url "login" %}" class="nav-link text-white hover:text-gray-500 px-4 py-2 flex items-center rounded-lg hover:bg-blue-50 transition-colors duration-200">
+                        <i class="fa-solid fa-right-to-bracket mr-2"></i>
+                        Login
+                    </a>
+                    <a href="{% url "register" %}" class="nav-link text-white hover:text-gray-500 px-4 py-2 flex items-center rounded-lg hover:bg-blue-50 transition-colors duration-200">
+                        <i class="fa-solid fa-right-to-bracket mr-2"></i>
+                        Register
+                    </a>
+                    </div>
+                    {% endif %}
+
+
+                    <button id="mobile-menu-button" class="md:hidden p-2 text-white hover:text-gray-400 rounded-lg hover:bg-green-300 transition-colors duration-200">
+                        <i class="fas fa-bars text-xl"></i>
+                        <span class="sr-only">Menu</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="mobile-menu md:hidden bg-green-700 border-t border-gray-200">
+            <div class="px-2 pt-2 pb-4 space-y-1">
+                <a href="{% url 'home' %}" class="block px-4 py-3 rounded-lg text-base font-medium text-white hover:text-gray-500 hover:bg-blue-50 flex items-center transition-colors duration-200">
+                    <i class="fas fa-home text-white mr-3 w-5 text-center"></i>
+                    Home
+                </a>
+
+                <a href="{% url 'market' %}" class="block px-4 py-3 rounded-lg text-base font-medium text-white hover:text-gray-500 hover:bg-blue-50 flex items-center transition-colors duration-200">
+                    <i class="fas fa-store text-white mr-3 w-5 text-center"></i>
+                    Market
+                </a>
+                <a href="#" class="block px-4 py-3 rounded-lg text-base font-medium text-white hover:text-gray-500 hover:bg-blue-50 flex items-center transition-colors duration-200">
+                    <i class="fas fa-comments text-white mr-3 w-5 text-center"></i>
+                    Forum
+                </a>
+                <a href="#" class="block px-4 py-3 rounded-lg text-base font-medium text-white hover:text-gray-500 hover:bg-blue-50 flex items-center transition-colors duration-200">
+                    <i class="fas fa-envelope text-white mr-3 w-5 text-center"></i>
+                    Contact
+                </a>
+                {% if user.is_authenticated %}
+                <div class="border-t border-gray-200 pt-2 mt-2">
+                    <a href="{% url "profile" %}" class="block px-4 py-3 rounded-lg text-base font-medium text-white hover:text-gray-500 hover:bg-blue-50 flex items-center transition-colors duration-200">
+                        <i class="fas fa-user-circle text-white mr-3 w-5 text-center"></i>
+                        Profile
+                    </a>
+                    {% comment %} <a href="#" class="block px-4 py-3 rounded-lg text-base font-medium text-white hover:text-gray-500 hover:bg-blue-50 flex items-center transition-colors duration-200">
+                        <i class="fas fa-cog text-white mr-3 w-5 text-center"></i>
+                        Dashboard
+                    </a> {% endcomment %}
+                            {% if user.role == 'Farmer' %}
+                                <a href="{% url "farmer_dashboard" %}" class="block rounded-lg px-4 py-2.5 text-white hover:bg-blue-50 hover:text-gray-500 flex items-center transition-colors duration-200">
+                                    <i class="fas fa-cog text-white hover:text-gray-500 mr-3 w-5 text-center"></i>
+                                    Dashboard
+                                </a>
+                            {% elif user.role == 'Trader' %}
+                                <a href="#" class="block rounded-lg px-4 py-2.5 text-white hover:bg-blue-50 hover:text-gray-500 flex items-center transition-colors duration-200">
+                                    <i class="fas fa-cog text-white hover:text-gray-500 mr-3 w-5 text-center"></i>
+                                    Trader Dashboard (Coming Soon)
+                                </a>
+                            {% elif user.role == 'Transporter' %}
+                                <a href="#" class="block rounded-lg px-4 py-2.5 text-white hover:bg-blue-50 hover:text-gray-500 flex items-center transition-colors duration-200">
+                                    <i class="fas fa-cog text-white hover:text-gray-500 mr-3 w-5 text-center"></i>
+                                    Transporter Dashboard (Coming Soon)
+                                </a>
+                            {% endif %}
+
+                            <form method="post" action="{% url 'logout' %}" class="px-4 rounded-lg py-2.5 flex items-center  hover:bg-blue-50 hover:text-gray-500">
+                            {% csrf_token %}
+                                <i class="fas fa-sign-out-alt text-white hover:text-gray-500 mr-3 w-5 text-center"></i>
+
+                                <button type="submit" class=" rounded-md text-gray-300">
+                                    Logout
+                                </button>
+                            </form>
+                </div>
+                {% else %}
+                <div class="border-t border-gray-200 pt-2 mt-2">
+                    <a href="{% url "login" %}" class="block px-4 py-3 rounded-lg text-base font-medium text-white hover:text-gray-500 hover:bg-blue-50 flex items-center transition-colors duration-200">
+                        <i class="fas fa-right-to-bracket text-white mr-3 w-5 text-center"></i>
+                        Login
+                    </a>
+                    <a href="{% url "register" %}" class="block px-4 py-3 rounded-lg text-base font-medium text-white hover:text-gray-500 hover:bg-blue-50 flex items-center transition-colors duration-200">
+                        <i class="fas fa-right-to-bracket text-white mr-3 w-5 text-center"></i>
+                        Register
+                    </a>
+                   </div> 
+                {% endif %}
+            </div>
+        </div>
+    </nav>
 
     <!-- Main Content -->
     <main class="flex-grow container mx-auto px-4 py-8">
@@ -194,7 +571,7 @@
                     </div>
                 </div>
             </div>
-            <hr class="my-6 border-gray-700 lg:my-8" />
+            <hr class="my-6 border-white lg:my-8" />
             <div class="text-center">
                 <span class="text-sm text-gray-300">© 2025 MoMarketGH™. All Rights Reserved.</span>
             </div>
@@ -207,7 +584,7 @@
     <div class="flex items-center justify-around py-2 relative">
         
         <!-- Home Tab -->
-        <a href="{% url 'home' %}" class="flex flex-col items-center py-2 px-4 {% if request.resolver_match.url_name == 'home' %}tab-active text-blue-600{% else %}text-gray-600{% endif %}">
+        <a href="{% url 'home' %}" class="flex flex-col items-center py-2 px-4 {% if request.resolver_match.url_name == 'home' %}tab-active text-gray-500{% else %}text-gray-500{% endif %}">
             <div class="relative">
                 <i class="fas fa-home text-xl mb-1"></i>
                 <div class="tab-indicator absolute -bottom-5 left-0 h-0.5 bg-gray-400 rounded-full w-0"></div>
@@ -216,7 +593,7 @@
         </a>
 
         <!-- Market Tab -->
-        <a href="{% url 'market' %}" class="flex flex-col items-center py-2 px-4 {% if request.resolver_match.url_name == 'market' %}tab-active text-blue-600{% else %}text-gray-600{% endif %}">
+        <a href="{% url 'market' %}" class="flex flex-col items-center py-2 px-4 {% if request.resolver_match.url_name == 'market' %}tab-active text-gray-500{% else %}text-gray-500{% endif %}">
             <div class="relative">
                 <i class="fas fa-store text-xl mb-1"></i>
                 <div class="tab-indicator absolute -bottom-5 left-0 h-0.5 bg-gray-400 rounded-full w-0"></div>
@@ -238,16 +615,16 @@
           {% endif %}
 
         <!-- Trends Tab -->
-        <a href="#" class="flex flex-col items-center py-2 px-4 {% if request.path == '/trends/' %}tab-active text-blue-600{% else %}text-gray-600{% endif %}">
+        <a href="#" class="flex flex-col items-center py-2 px-4 {% if request.path == '/trends/' %}tab-active text-gray-500{% else %}text-gray-500{% endif %}">
             <div class="relative">
-                <i class="fas fa-chart-area text-xl mb-1"></i>
+                <i class="fas fa-comments text-xl mb-1"></i>
                 <div class="tab-indicator absolute -bottom-5 left-0 h-0.5 bg-gray-400 rounded-full w-0"></div>
             </div>
-            <span class="text-xs font-medium">Trends</span>
+            <span class="text-xs font-medium">Forum</span>
         </a>
 
         <!-- Profile Tab -->
-        <a href="{% url 'farmer_dashboard' %}" class="flex flex-col items-center py-2 px-4 {% if request.resolver_match.url_name == 'farmer_dashboard' %}tab-active text-blue-600{% else %}text-gray-600{% endif %}">
+        <a href="{% url 'farmer_dashboard' %}" class="flex flex-col items-center py-2 px-4 {% if request.resolver_match.url_name == 'farmer_dashboard' %}tab-active text-gray-500{% else %}text-gray-500{% endif %}">
             <div class="relative">
                 <i class="fas fa-user text-xl mb-1"></i>
                 <div class="tab-indicator absolute -bottom-5 left-0 h-0.5 bg-gray-400 rounded-full w-0"></div>
@@ -258,18 +635,41 @@
 </nav>
 
 
+
+{% comment %} <iframe 
+  src="{% url 'chatbot:widget' %}" 
+  title="Ask Kwasi, your AI assistant"
+  class="fixed bottom-20 right-4 w-[95%] max-w-[400px] h-[85%] md:bottom-5 md:right-5 md:w-[400px] md:h-[600px] border-none z-66 rounded-xl transition-all duration-300"
+  id="kwasi-chatbot-frame">
+</iframe>  {% endcomment %}
+    <!-- Overlay for mobile chatbot -->
+    <div class="chatbot-overlay" id="chatbot-overlay"></div>
+
+    <!-- Fixed Chatbot Widget -->
+<div id="kwasi-chatbot-frame">
+    <div class="chat-icon">
+        <i class="fas fa-robot"></i>
+    </div>
+    <iframe 
+        src="{% url 'chatbot:widget' %}" 
+        title="Ask Kwasi, your AI assistant"
+        id="chatbot-iframe"
+        >
+    </iframe>
+</div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/js/all.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
 
     <script>
-        const toggleButton = document.querySelector('[data-collapse-toggle]');
+        {% comment %} const toggleButton = document.querySelector('[data-collapse-toggle]');
         const menu = document.getElementById('navbar-menu');
 
         toggleButton.addEventListener('click', () => {
             menu.classList.toggle('hidden');
-        });
+        }); {% endcomment %}
 
         function setActiveTab(tabId) {
     const tabButtons = document.querySelectorAll("nav button");
@@ -278,8 +678,8 @@
     // Remove 'tab-active' class and reset styles
     tabButtons.forEach(btn => {
         btn.classList.remove("tab-active");
-        btn.classList.remove("text-blue-600");
-        btn.classList.add("text-gray-600");
+        btn.classList.remove("text-gray-500");
+        btn.classList.add("text-gray-500");
 
         const indicator = btn.querySelector(".tab-indicator");
         if (indicator) {
@@ -291,8 +691,8 @@
     const activeTab = document.getElementById(`tab-${tabId}`);
     if (activeTab) {
         activeTab.classList.add("tab-active");
-        activeTab.classList.remove("text-gray-600");
-        activeTab.classList.add("text-blue-600");
+        activeTab.classList.remove("text-gray-500");
+        activeTab.classList.add("text-gray-500");
 
         const indicator = activeTab.querySelector(".tab-indicator");
         if (indicator) {
@@ -302,7 +702,234 @@
     }
 }
 
+{% comment %} document.addEventListener('DOMContentLoaded', function() {
+    const frame = document.getElementById('kwasi-chatbot-frame');
+    if (frame) {
+        frame.onload = function() {
+            // Allow interaction only with the chatbot widget area
+            frame.contentWindow.document.addEventListener('click', function(e) {
+                frame.style.pointerEvents = 'auto';
+            });
+        };
+    }
+}); {% endcomment %}
 
+{% comment %} document.addEventListener('DOMContentLoaded', function () {
+    const frame = document.getElementById('kwasi-chatbot-frame');
+
+    window.addEventListener('message', function (e) {
+        const action = e.data?.chatbotAction;
+        if (!frame || !action) return;
+
+        if (action === 'open') {
+            frame.style.width = '100%';
+            frame.style.maxWidth = '400px';
+            frame.style.height = '600px';
+            frame.style.pointerEvents = 'auto'; // allow interaction
+        }
+
+        if (action === 'close') {
+            frame.style.width = '60px';
+            frame.style.height = '60px';
+            frame.style.pointerEvents = 'none'; // allow clicks to pass through
+        }
+    });
+
+    // Optional: disable pointer events initially (if not in inline style)
+    frame.style.pointerEvents = 'none';
+}); {% endcomment %}
+       let isChatbotExpanded = false;
+const chatFrame = document.getElementById('kwasi-chatbot-frame');
+const overlay = document.getElementById('chatbot-overlay');
+const chatIcon = chatFrame.querySelector('.chat-icon');
+const chatIframe = document.getElementById('chatbot-iframe');
+
+function toggleChatbot() {
+    isChatbotExpanded = !isChatbotExpanded;
+
+    if (isChatbotExpanded) {
+        chatFrame.classList.add('expanded');
+
+        if (window.innerWidth <= 768) {
+            overlay.classList.add('show');
+        }
+
+        // Tell iframe to "open" (optional)
+        try {
+            chatIframe.contentWindow.postMessage({ chatbotAction: 'open' }, '*');
+        } catch (e) {
+            console.log('Could not send message to iframe:', e);
+        }
+
+    } else {
+        chatFrame.classList.remove('expanded');
+        overlay.classList.remove('show');
+
+        try {
+            chatIframe.contentWindow.postMessage({ chatbotAction: 'close' }, '*');
+        } catch (e) {
+            console.log('Could not send message to iframe:', e);
+        }
+    }
+}
+
+// Click handler for the chatbot
+chatFrame.addEventListener('click', function(e) {
+    if (!isChatbotExpanded) {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleChatbot();
+    }
+});
+
+// Click overlay to close on mobile
+overlay.addEventListener('click', function() {
+    if (isChatbotExpanded) {
+        toggleChatbot();
+    }
+});
+
+// Handle window resize
+window.addEventListener('resize', function() {
+    if (window.innerWidth > 768) {
+        overlay.classList.remove('show');
+    } else if (isChatbotExpanded) {
+        overlay.classList.add('show');
+    }
+});
+
+// Listen for messages from iframe
+window.addEventListener('message', function(e) {
+    if (!e.data || typeof e.data !== 'object') return;
+    
+    const action = e.data.chatbotAction;
+    if (!action) return;
+
+    if (action === 'close' && isChatbotExpanded) {
+        toggleChatbot();
+    } else if (action === 'open' && !isChatbotExpanded) {
+        toggleChatbot();
+    }
+});
+
+// Prevent clicks inside expanded chatbot from bubbling
+chatFrame.addEventListener('click', function(e) {
+    if (isChatbotExpanded) {
+        e.stopPropagation();
+    }
+});
+
+    </script>
+
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Enhanced mobile menu toggle with animation
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            if (mobileMenuButton && mobileMenu) {
+                mobileMenuButton.addEventListener('click', function() {
+                    const isExpanded = mobileMenu.classList.contains('open');
+                    if (isExpanded) {
+                        mobileMenu.classList.remove('open');
+                        setTimeout(() => {
+                            mobileMenu.classList.add('hidden');
+                        }, 300); // Match this with the transition duration
+                    } else {
+                        mobileMenu.classList.remove('hidden');
+                        // Trigger reflow to enable animation
+                        void mobileMenu.offsetHeight;
+                        mobileMenu.classList.add('open');
+                    }
+                    
+                    // Toggle aria-expanded attribute
+                    const expanded = this.getAttribute('aria-expanded') === 'true';
+                    this.setAttribute('aria-expanded', !expanded);
+                    
+                    // Change icon
+                    const icon = this.querySelector('i');
+                    if (icon) {
+                        icon.classList.toggle('fa-bars');
+                        icon.classList.toggle('fa-times');
+                    }
+                });
+            }
+
+            // Improved dropdown handling
+            const dropdowns = document.querySelectorAll('.dropdown');
+            
+            dropdowns.forEach(dropdown => {
+                const button = dropdown.querySelector('button');
+                const menu = dropdown.querySelector('.dropdown-menu');
+                
+                if (button && menu) {
+                    // Handle click
+                    button.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const isOpen = !menu.classList.contains('opacity-0');
+                        
+                        // Close all other dropdowns first
+                        document.querySelectorAll('.dropdown-menu').forEach(m => {
+                            if (m !== menu) {
+                                m.classList.add('opacity-0', 'invisible', '-translate-y-2');
+                            }
+                        });
+                        
+                        // Toggle current dropdown
+                        if (isOpen) {
+                            menu.classList.add('opacity-0', 'invisible', '-translate-y-2');
+                        } else {
+                            menu.classList.remove('opacity-0', 'invisible', '-translate-y-2');
+                        }
+                    });
+                    
+                    // Handle hover for desktop
+                    if (window.innerWidth > 768) {
+                        dropdown.addEventListener('mouseenter', () => {
+                            menu.classList.remove('opacity-0', 'invisible', '-translate-y-2');
+                        });
+                        
+                        dropdown.addEventListener('mouseleave', () => {
+                            menu.classList.add('opacity-0', 'invisible', '-translate-y-2');
+                        });
+                    }
+                }
+            });
+            
+            // Close dropdowns when clicking outside
+            document.addEventListener('click', function() {
+                document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                    menu.classList.add('opacity-0', 'invisible', '-translate-y-2');
+                });
+            });
+            
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 768 && mobileMenu) {
+                    mobileMenu.classList.remove('open');
+                    mobileMenu.classList.add('hidden');
+                    const menuButton = document.getElementById('mobile-menu-button');
+                    if (menuButton) {
+                        menuButton.setAttribute('aria-expanded', 'false');
+                        const icon = menuButton.querySelector('i');
+                        if (icon) {
+                            icon.classList.add('fa-bars');
+                            icon.classList.remove('fa-times');
+                        }
+                    }
+                }
+            });
+            
+            // Add active state to current page link (example)
+            const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+            document.querySelectorAll('.nav-link').forEach(link => {
+                const href = link.getAttribute('href');
+                if (href && href.includes(currentPath)) {
+                    link.classList.add('text-gray-500', 'font-medium');
+                    link.classList.remove('text-white');
+                }
+            });
+        });
     </script>
 
     {% block extra_js %}{% endblock %}

@@ -8,26 +8,31 @@
     <div class="bg-green-600 rounded-2xl shadow-xl overflow-hidden mb-8">
 <div class="px-6 py-8 sm:p-10 flex flex-col sm:flex-row sm:items-center">
     <!-- Avatar Section -->
-    <div class="relative mb-6 sm:mb-0 sm:mr-8 flex-shrink-0 flex justify-center items-center">
-        {% if user.profile_photo %}
-            <img src="{{ user.profile_photo.url }}" alt="Profile Photo" 
-                 class="w-32 h-32 sm:w-40 sm:h-40 rounded-full border-4 border-white shadow-lg object-cover">
-        {% else %}
-            <div class="w-32 h-32 sm:w-40 sm:h-40 rounded-full bg-white/20 flex items-center justify-center text-white text-5xl shadow-inner border-4 border-white">
-                <i class="fas fa-user"></i>
-            </div>
-        {% endif %}
-        <!-- Role Badge -->
-        <span class="absolute -bottom-2 -right-2 bg-white rounded-full p-2 shadow-md">
-            {% if user.role == 'Farmer' %}
-                <span class="farmer-color text-2xl">👨‍🌾</span>
-            {% elif user.role == 'Trader' %}
-                <span class="trader-color text-2xl">🧑‍💼</span>
-            {% elif user.role == 'Transporter' %}
-                <span class="transporter-color text-2xl">🚚</span>
+        <div class="relative mb-6 sm:mb-0 sm:mr-8 flex-shrink-0 flex justify-center items-center">
+            {% if user.profile_photo and user.profile_photo.name %}
+                <div class="h-40 w-40 rounded-full bg-blue-100 flex items-center justify-center text-gray-500 overflow-hidden border-4 border-white shadow-lg">
+                    <img src="{{ user.profile_photo.url }}" alt="Profile Photo" class="h-full w-full object-cover">
+                </div>
+            {% else %}
+                <div class="h-40 w-40 rounded-full bg-white/20 flex items-center justify-center text-white text-5xl shadow-inner border-4 border-white">
+                    <i class="fas fa-user"></i>
+                </div>
             {% endif %}
-        </span>
-    </div>
+
+            <!-- Role Badge -->
+            <span class="absolute items-center -bottom-2 md:-right-2 bg-white rounded-full p-2 shadow-md">
+                {% if user.role == 'Farmer' %}
+                    <span class="farmer-color text-2xl">👨‍🌾</span>
+                {% elif user.role == 'Trader' %}
+                    <span class="trader-color text-2xl">🧑‍💼</span>
+                {% elif user.role == 'Transporter' %}
+                    <span class="transporter-color text-2xl">🚚</span>
+                {% endif %}
+            </span>
+        </div>
+
+
+
 
     <!-- Text Content Section -->
     <div class="text-center sm:text-left w-full">

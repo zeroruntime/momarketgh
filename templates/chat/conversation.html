@@ -269,7 +269,6 @@ function chatApp() {
                 }
 
                 this.newMessage = '';
-                this.autoResize(); // Reset textarea height
                 await this.fetchMessages(false);
                 
             } catch (error) {

@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kwasi Agricultural Assistant</title>
+    <style>
+        .kwasi-chatbot {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .kwasi-chat-trigger {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #158d67;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+            transition: all 0.3s ease;
+            color: white;
+            font-size: 24px;
+        }
+
+        .kwasi-chat-trigger:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+        }
+
+        .kwasi-chat-trigger.active {
+            background: linear-gradient(135deg, #1976D2, #2196F3);
+        }
+
+        .kwasi-chat-window {
+            position: absolute;
+            bottom: 70px;
+            right: 0;
+            width: 350px;
+            height: 500px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            animation: slideUp 0.3s ease;
+            z-index:65;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .kwasi-chat-header {
+            background: #086044;
+            color: white;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .kwasi-chat-header h3 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .kwasi-chat-header .status {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .kwasi-close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .kwasi-close-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .kwasi-chat-messages {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            background: #f8f9fa;
+        }
+
+        .kwasi-message {
+            margin-bottom: 12px;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .kwasi-message.user {
+            justify-content: flex-end;
+        }
+
+        .kwasi-message-content {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            word-wrap: break-word;
+            line-height: 1.4;
+        }
+
+        .kwasi-message.bot .kwasi-message-content {
+            background: white;
+            color: #333;
+            border-bottom-left-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .kwasi-message.user .kwasi-message-content {
+            background: #086044;
+            color: white;
+            border-bottom-right-radius: 8px;
+        }
+
+        .kwasi-bot-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2E7D32, #4CAF50);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            margin-right: 8px;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .kwasi-typing {
+            display: none;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .kwasi-typing-dots {
+            display: flex;
+            gap: 4px;
+            margin-left: 8px;
+        }
+
+        .kwasi-typing-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #086044;
+            animation: typing 1.4s infinite;
+        }
+
+        .kwasi-typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .kwasi-typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+                opacity: 0.4;
+            }
+            30% {
+                transform: translateY(-10px);
+                opacity: 1;
+            }
+        }
+
+        .kwasi-chat-input {
+            padding: 16px;
+            border-top: 1px solid #e0e0e0;
+            background: white;
+            display: flex;
+            gap: 8px;
+        }
+
+        .kwasi-message-input {
+            flex: 1;
+            border: 1px solid #e0e0e0;
+            border-radius: 24px;
+            padding: 12px 16px;
+            outline: none;
+            font-size: 14px;
+            resize: none;
+            max-height: 80px;
+        }
+
+        .kwasi-message-input:focus {
+            border-color: #086044;
+        }
+
+        .kwasi-send-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #086044;
+            border: none;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .kwasi-send-btn:hover {
+            background: #086044;
+        }
+
+        .kwasi-send-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .kwasi-welcome-message {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 16px;
+            padding: 16px;
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e0e0e0;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .kwasi-chat-window {
+                width: 100vw;
+                height: 100vh;
+                bottom: 0;
+                right: 0;
+                border-radius: 0;
+                position: fixed;
+            }
+
+            .kwasi-chatbot {
+                bottom: 15px;
+                right: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Kwasi Chatbot Widget -->
+    <div class="kwasi-chatbot">
+        <!-- Chat Window -->
+        <div class="kwasi-chat-window" id="kwasiChatWindow">
+            <!-- Header -->
+            <div class="kwasi-chat-header">
+                <div>
+                    <h3>🌾 Kwasi - Agricultural Assistant</h3>
+                    <div class="status">Online • Ready to help</div>
+                </div>
+                <button class="kwasi-close-btn" id="kwasiCloseBtn">×</button>
+            </div>
+
+            <!-- Messages -->
+            <div class="kwasi-chat-messages" id="kwasiMessages">
+                <div class="kwasi-welcome-message">
+                    <strong>Akwaaba! 👋</strong><br>
+                    I'm Kwasi, your agricultural assistant. I can help you with:
+                    <br><br>
+                    • Crop pricing and market info<br>
+                    • Farming tips and advice<br>
+                    • Platform navigation<br>
+                    • Seasonal farming guidance
+                </div>
+            </div>
+
+            <!-- Typing Indicator -->
+            <div class="kwasi-typing" id="kwasiTyping">
+                <div class="kwasi-bot-avatar">K</div>
+                <div class="kwasi-typing-dots">
+                    <div class="kwasi-typing-dot"></div>
+                    <div class="kwasi-typing-dot"></div>
+                    <div class="kwasi-typing-dot"></div>
+                </div>
+            </div>
+
+            <!-- Input -->
+            <div class="kwasi-chat-input">
+                <textarea 
+                    class="kwasi-message-input" 
+                    id="kwasiMessageInput" 
+                    placeholder="Ask me anything about farming..."
+                    rows="1"
+                ></textarea>
+                <button class="kwasi-send-btn" id="kwasiSendBtn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Chat Trigger Button -->
+        {% comment %} <button class="kwasi-chat-trigger" id="kwasiTrigger" title="Ask Kwasi, your AI assistant">
+            <span id="kwasiTriggerIcon">🤖</span>
+        </button>  {% endcomment %}
+    </div>
+<script>
+    class KwasiChatbot {
+        constructor() {
+            this.isOpen = false;
+            this.isTyping = false;
+            this.conversationHistory = [];
+            this.initializeElements();
+            this.bindEvents();
+        }
+
+        formatMarkdownToHTML(markdown) {
+            return markdown
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')              // bold
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')                          // italic
+                .replace(/(?:\r\n|\r|\n)/g, '<br>')                            // line breaks
+                .replace(/\n\s*[-*] (.*?)(?=\n|$)/g, '<li>$1</li>')            // lists
+                .replace(/<li>(.*?)<\/li>/g, '<ul><li>$1</li></ul>');         // wrap in <ul>
+        }
+
+        initializeElements() {
+            this.chatWindow = document.getElementById('kwasiChatWindow');
+           // this.trigger = document.getElementById('kwasiTrigger');
+           // this.triggerIcon = document.getElementById('kwasiTriggerIcon');
+            this.closeBtn = document.getElementById('kwasiCloseBtn');
+            this.messages = document.getElementById('kwasiMessages');
+            this.messageInput = document.getElementById('kwasiMessageInput');
+            this.sendBtn = document.getElementById('kwasiSendBtn');
+            this.typingIndicator = document.getElementById('kwasiTyping');
+        }
+
+        bindEvents() {
+           // this.trigger.addEventListener('click', () => this.toggleChat());
+            this.closeBtn.addEventListener('click', () => this.closeChat());
+            this.sendBtn.addEventListener('click', () => this.sendMessage());
+
+            this.messageInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    this.sendMessage();
+                }
+            });
+
+            this.messageInput.addEventListener('input', () => {
+                this.autoResize();
+            });
+        }
+
+        toggleChat() {
+            this.isOpen ? this.closeChat() : this.openChat();
+        }
+
+        openChat() {
+            this.chatWindow.style.display = 'flex';
+           // this.trigger.classList.add('active');
+          //  this.triggerIcon.textContent = '×';
+            this.isOpen = true;
+            this.messageInput.focus();
+            window.parent.postMessage({ chatbotAction: 'open' }, '*');
+
+        }
+
+        closeChat() {
+            this.chatWindow.style.display = 'none';
+           // this.trigger.classList.remove('active');
+           // this.triggerIcon.textContent = '🤖';
+            this.isOpen = false;
+            window.parent.postMessage({ chatbotAction: 'close' }, '*');
+
+        }
+
+        autoResize() {
+            this.messageInput.style.height = 'auto';
+            this.messageInput.style.height = Math.min(this.messageInput.scrollHeight, 80) + 'px';
+        }
+
+        async sendMessage() {
+            const message = this.messageInput.value.trim();
+            if (!message || this.isTyping) return;
+
+            this.addMessage(message, 'user');
+            this.messageInput.value = '';
+            this.autoResize();
+            this.showTyping();
+
+            this.conversationHistory.push({ role: 'user', content: message });
+
+            try {
+                const response = await fetch('/chatbot/chat/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': this.getCsrfToken()
+                    },
+                    body: JSON.stringify({
+                        message,
+                        history: this.conversationHistory
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    this.hideTyping();
+                 //   this.addMessage(data.response, 'bot');
+                    this.addMessage(this.formatMarkdownToHTML(data.response), 'bot');
+                    this.conversationHistory.push({ role: 'assistant', content: data.response });
+                } else {
+                    throw new Error(data.error || 'Failed to get response');
+                }
+            } catch (error) {
+                this.hideTyping();
+                this.addMessage('Sorry, I encountered an error. Please try again.', 'bot');
+                console.error('Chat error:', error);
+            }
+        }
+
+        addMessage(content, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `kwasi-message ${sender}`;
+
+            if (sender === 'bot') {
+                messageDiv.innerHTML = `
+                    <div class="kwasi-bot-avatar">K</div>
+                    <div class="kwasi-message-content">${content}</div>
+                `;
+            } else {
+                messageDiv.innerHTML = `<div class="kwasi-message-content">${content}</div>`;
+            }
+
+            this.messages.appendChild(messageDiv);
+            this.scrollToBottom();
+        }
+
+        showTyping() {
+            this.isTyping = true;
+            this.typingIndicator.style.display = 'flex';
+            this.sendBtn.disabled = true;
+            this.scrollToBottom();
+        }
+
+        hideTyping() {
+            this.isTyping = false;
+            this.typingIndicator.style.display = 'none';
+            this.sendBtn.disabled = false;
+        }
+
+        scrollToBottom() {
+            setTimeout(() => {
+                this.messages.scrollTop = this.messages.scrollHeight;
+            }, 100);
+        }
+
+        getCsrfToken() {
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                const [name, value] = cookie.trim().split('=');
+                if (name === 'csrftoken') {
+                    return value;
+                }
+            }
+            return '';
+        }
+    }
+
+    window.addEventListener('message', function(e) {
+    if (!window.chatbotInstance) return;
+    if (e.data?.chatbotAction === 'open') {
+        window.chatbotInstance.openChat();
+    } else if (e.data?.chatbotAction === 'close') {
+        window.chatbotInstance.closeChat();
+    }
+});
+
+
+    {% comment %} document.addEventListener('DOMContentLoaded', () => {
+        new KwasiChatbot();
+    }); {% endcomment %}
+    document.addEventListener('DOMContentLoaded', () => {
+    window.chatbotInstance = new KwasiChatbot();
+});
+</script>
+
+    {% comment %} <script>
+        class KwasiChatbot {
+            constructor() {
+                this.isOpen = false;
+                this.isTyping = false;
+                this.initializeElements();
+                this.bindEvents();
+            }
+
+            initializeElements() {
+                this.chatWindow = document.getElementById('kwasiChatWindow');
+                this.trigger = document.getElementById('kwasiTrigger');
+                this.triggerIcon = document.getElementById('kwasiTriggerIcon');
+                this.closeBtn = document.getElementById('kwasiCloseBtn');
+                this.messages = document.getElementById('kwasiMessages');
+                this.messageInput = document.getElementById('kwasiMessageInput');
+                this.sendBtn = document.getElementById('kwasiSendBtn');
+                this.typingIndicator = document.getElementById('kwasiTyping');
+            }
+
+            bindEvents() {
+                this.trigger.addEventListener('click', () => this.toggleChat());
+                this.closeBtn.addEventListener('click', () => this.closeChat());
+                this.sendBtn.addEventListener('click', () => this.sendMessage());
+                
+                this.messageInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        this.sendMessage();
+                    }
+                });
+
+                this.messageInput.addEventListener('input', () => {
+                    this.autoResize();
+                });
+            }
+
+            toggleChat() {
+                if (this.isOpen) {
+                    this.closeChat();
+                } else {
+                    this.openChat();
+                }
+            }
+
+            openChat() {
+                this.chatWindow.style.display = 'flex';
+                this.trigger.classList.add('active');
+                this.triggerIcon.textContent = '×';
+                this.isOpen = true;
+                this.messageInput.focus();
+            }
+
+            closeChat() {
+                this.chatWindow.style.display = 'none';
+                this.trigger.classList.remove('active');
+                this.triggerIcon.textContent = '🤖';
+                this.isOpen = false;
+            }
+
+            autoResize() {
+                this.messageInput.style.height = 'auto';
+                this.messageInput.style.height = Math.min(this.messageInput.scrollHeight, 80) + 'px';
+            }
+
+            async sendMessage() {
+                const message = this.messageInput.value.trim();
+                if (!message || this.isTyping) return;
+
+                this.addMessage(message, 'user');
+                this.messageInput.value = '';
+                this.autoResize();
+                this.showTyping();
+
+                try {
+                    const response = await fetch('/chatbot/chat/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': this.getCsrfToken()
+                        },
+                        body: JSON.stringify({ message })
+                    });
+
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        this.hideTyping();
+                        this.addMessage(data.response, 'bot');
+                    } else {
+                        throw new Error(data.error || 'Failed to get response');
+                    }
+                } catch (error) {
+                    this.hideTyping();
+                    this.addMessage('Sorry, I encountered an error. Please try again.', 'bot');
+                    console.error('Chat error:', error);
+                }
+            }
+
+            addMessage(content, sender) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `kwasi-message ${sender}`;
+
+                if (sender === 'bot') {
+                    messageDiv.innerHTML = `
+                        <div class="kwasi-bot-avatar">K</div>
+                        <div class="kwasi-message-content">${content}</div>
+                    `;
+                } else {
+                    messageDiv.innerHTML = `
+                        <div class="kwasi-message-content">${content}</div>
+                    `;
+                }
+
+                this.messages.appendChild(messageDiv);
+                this.scrollToBottom();
+            }
+
+            showTyping() {
+                this.isTyping = true;
+                this.typingIndicator.style.display = 'flex';
+                this.sendBtn.disabled = true;
+                this.scrollToBottom();
+            }
+
+            hideTyping() {
+                this.isTyping = false;
+                this.typingIndicator.style.display = 'none';
+                this.sendBtn.disabled = false;
+            }
+
+            scrollToBottom() {
+                setTimeout(() => {
+                    this.messages.scrollTop = this.messages.scrollHeight;
+                }, 100);
+            }
+
+            getCsrfToken() {
+                const cookies = document.cookie.split(';');
+                for (let cookie of cookies) {
+                    const [name, value] = cookie.trim().split('=');
+                    if (name === 'csrftoken') {
+                        return value;
+                    }
+                }
+                return '';
+            }
+        }
+
+        // Initialize the chatbot when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new KwasiChatbot();
+        });
+    </script> {% endcomment %}
+</body>
+</html>
